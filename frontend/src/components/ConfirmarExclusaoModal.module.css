@@ -1,0 +1,76 @@
+.fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(27, 79, 216, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dialogo {
+  background: var(--papel);
+  border: 2px solid var(--sinal);
+  padding: 34px 34px 28px;
+  width: 520px;
+  max-width: calc(100vw - 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rotulo {
+  color: var(--sinal-texto);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.pergunta {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.18px;
+  color: var(--tinta);
+  margin: 0;
+}
+
+.descricao {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--apoio);
+  margin: 0;
+}
+
+.dica {
+  border-left: 3px solid var(--linha);
+  padding-left: 12px;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 1.1px;
+  color: var(--tinta);
+}
+
+.acoes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.cancelar,
+.excluir {
+  font-weight: 700;
+  font-size: 13px;
+  padding: 13px 20px;
+  border: 1px solid var(--linha);
+}
+
+.cancelar {
+  background: transparent;
+  color: var(--tinta);
+}
+
+.excluir {
+  background: var(--sinal);
+  color: var(--papel);
+  border-color: var(--linha);
+}

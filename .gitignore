@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/*.db
+**/__pycache__/
+
+.DS_Store

@@ -1,0 +1,40 @@
+:root {
+  --papel: #f2efe9;
+  --tinta: #1b4fd8;
+  --apoio: #5c6478;
+  --linha: #1b4fd8;
+  --sinal: #e8341c;
+  --sinal-texto: #ce2a12;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: "Archivo", sans-serif;
+  font-variation-settings: "wdth" 100;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.mono {
+  font-family: "Space Mono", monospace;
+}

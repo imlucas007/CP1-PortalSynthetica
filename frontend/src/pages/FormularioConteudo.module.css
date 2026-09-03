@@ -1,0 +1,142 @@
+.pagina {
+  padding: 36px 48px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.voltar {
+  background: none;
+  border: none;
+  font-size: 9px;
+  letter-spacing: 0.9px;
+  color: var(--apoio);
+  align-self: flex-start;
+  padding: 0;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 44px;
+  letter-spacing: -0.8px;
+  color: var(--tinta);
+  margin: 0 0 5px;
+}
+
+.subtitulo {
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  color: var(--apoio);
+}
+
+.acoesTopo {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelar,
+.salvar {
+  font-weight: 700;
+  font-size: 13px;
+  padding: 13px 20px;
+  border: 1px solid var(--linha);
+}
+
+.cancelar {
+  background: transparent;
+  color: var(--tinta);
+}
+
+.salvar {
+  background: var(--tinta);
+  color: var(--papel);
+  border-color: var(--tinta);
+}
+
+.salvar:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mensagemErro {
+  color: var(--sinal-texto);
+  font-size: 13px;
+}
+
+.mensagem {
+  color: var(--apoio);
+  font-size: 13px;
+}
+
+.grade {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.colunaPrincipal {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.colunaLateral {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rotulo {
+  font-size: 9px;
+  letter-spacing: 0.9px;
+  color: var(--apoio);
+  margin: 0 0 7px;
+}
+
+.caixaCampo {
+  border: 1px solid var(--linha);
+  padding: 13px 14px;
+}
+
+.caixaCampo input,
+.caixaCampo select,
+.caixaCampo textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: var(--tinta);
+  font-family: "Archivo", sans-serif;
+  resize: vertical;
+}
+
+.statusOpcoes {
+  display: flex;
+  gap: 8px;
+}
+
+.statusBotao {
+  border: 1px solid var(--linha);
+  background: transparent;
+  color: var(--tinta);
+  font-size: 9px;
+  letter-spacing: 0.9px;
+  padding: 11px 15px;
+}
+
+.statusAtivo {
+  background: var(--tinta);
+  color: var(--papel);
+}
