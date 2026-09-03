@@ -1,7 +1,7 @@
 .fundo {
   position: fixed;
   inset: 0;
-  background: rgba(27, 79, 216, 0.45);
+  background: rgba(107, 115, 135, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,18 +9,20 @@
 }
 
 .dialogo {
-  background: var(--papel);
-  border: 2px solid var(--sinal);
-  padding: 34px 34px 28px;
   width: 520px;
   max-width: calc(100vw - 40px);
+  border-radius: 22px;
+}
+
+.dialogo > div {
+  padding: 34px 34px 28px;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
 .rotulo {
-  color: var(--sinal-texto);
+  color: var(--admin-apoio);
   font-weight: 700;
   font-size: 13px;
 }
@@ -30,24 +32,24 @@
   font-size: 18px;
   line-height: 24px;
   letter-spacing: -0.18px;
-  color: var(--tinta);
+  color: var(--admin-texto);
   margin: 0;
 }
 
 .descricao {
   font-size: 14px;
   line-height: 22px;
-  color: var(--apoio);
+  color: var(--admin-apoio);
   margin: 0;
 }
 
 .dica {
-  border-left: 3px solid var(--linha);
+  border-left: 3px solid rgba(255, 255, 255, 0.85);
   padding-left: 12px;
   font-size: 11px;
   line-height: 16px;
   letter-spacing: 1.1px;
-  color: var(--tinta);
+  color: var(--admin-texto);
 }
 
 .acoes {
@@ -61,16 +63,16 @@
   font-weight: 700;
   font-size: 13px;
   padding: 13px 20px;
-  border: 1px solid var(--linha);
+  border: 1px solid rgba(255, 255, 255, 0.85);
 }
 
 .cancelar {
-  background: transparent;
-  color: var(--tinta);
+  background: white;
+  color: var(--admin-texto);
 }
 
 .excluir {
-  background: var(--sinal);
-  color: var(--papel);
-  border-color: var(--linha);
+  background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
+  color: #f2efe9;
+  border-radius: 999px;
 }

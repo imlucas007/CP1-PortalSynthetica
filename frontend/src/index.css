@@ -6,6 +6,18 @@
   --sinal: #e8341c;
   --sinal-texto: #ce2a12;
 
+  /* Admin (visual "glass" — dashboard, conteúdos, cartas) */
+  --admin-fundo-1: #fcfbfa;
+  --admin-fundo-2: #f4f3f1;
+  --admin-fundo-3: #f8f7f5;
+  --admin-texto: #0b0b0e;
+  --admin-apoio: #595e70;
+  --admin-apoio-fraco: #9499a8;
+  --admin-apoio-forte: #9ea6b8;
+  --admin-linha: rgba(255, 255, 255, 0.9);
+  --admin-sinal: #e8341c;
+  --admin-sinal-texto: #ce2a12;
+
   color-scheme: light;
 }
 

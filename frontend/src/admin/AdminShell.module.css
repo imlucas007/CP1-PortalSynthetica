@@ -1,0 +1,53 @@
+.pagina {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 48px 64px;
+}
+
+.barra {
+  height: 56px;
+}
+
+.barraConteudo {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px 12px 26px;
+}
+
+.barraConteudo > p:first-child {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+
+.barraConteudo > p:last-child {
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+}
+
+.nav a {
+  color: var(--admin-apoio);
+  text-decoration: none;
+}
+
+.nav a.ativo {
+  color: var(--admin-texto);
+  font-weight: 700;
+}
+
+.conteudo {
+  padding-top: 40px;
+}

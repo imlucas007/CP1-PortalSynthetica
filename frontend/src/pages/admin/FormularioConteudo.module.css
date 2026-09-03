@@ -1,5 +1,4 @@
 .pagina {
-  padding: 36px 48px 48px;
   display: flex;
   flex-direction: column;
   gap: 26px;
@@ -10,7 +9,7 @@
   border: none;
   font-size: 9px;
   letter-spacing: 0.9px;
-  color: var(--apoio);
+  color: var(--admin-apoio);
   align-self: flex-start;
   padding: 0;
 }
@@ -23,17 +22,16 @@
 
 .titulo {
   font-weight: 700;
-  font-size: 40px;
-  line-height: 44px;
+  font-size: 42px;
   letter-spacing: -0.8px;
-  color: var(--tinta);
+  color: var(--admin-texto);
   margin: 0 0 5px;
 }
 
 .subtitulo {
   font-size: 11px;
   letter-spacing: 1.1px;
-  color: var(--apoio);
+  color: var(--admin-apoio);
 }
 
 .acoesTopo {
@@ -46,18 +44,18 @@
   font-weight: 700;
   font-size: 13px;
   padding: 13px 20px;
-  border: 1px solid var(--linha);
 }
 
 .cancelar {
-  background: transparent;
-  color: var(--tinta);
+  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: var(--admin-texto);
 }
 
 .salvar {
-  background: var(--tinta);
-  color: var(--papel);
-  border-color: var(--tinta);
+  background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
+  color: #f2efe9;
+  border-radius: 999px;
 }
 
 .salvar:disabled {
@@ -66,12 +64,12 @@
 }
 
 .mensagemErro {
-  color: var(--sinal-texto);
+  color: var(--admin-sinal-texto);
   font-size: 13px;
 }
 
 .mensagem {
-  color: var(--apoio);
+  color: var(--admin-apoio);
   font-size: 13px;
 }
 
@@ -100,26 +98,41 @@
 .rotulo {
   font-size: 9px;
   letter-spacing: 0.9px;
-  color: var(--apoio);
+  color: var(--admin-apoio);
   margin: 0 0 7px;
 }
 
 .caixaCampo {
-  border: 1px solid var(--linha);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: white;
   padding: 13px 14px;
 }
 
 .caixaCampo input,
-.caixaCampo select,
-.caixaCampo textarea {
+.caixaCampo select {
   border: none;
   outline: none;
   background: transparent;
   width: 100%;
   font-size: 14px;
-  color: var(--tinta);
+  color: var(--admin-texto);
+  font-family: "Archivo", sans-serif;
+}
+
+.caixaVidro {
+  padding: 0;
+}
+
+.caixaVidro textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: var(--admin-texto);
   font-family: "Archivo", sans-serif;
   resize: vertical;
+  padding: 13px 14px 90px;
 }
 
 .statusOpcoes {
@@ -128,15 +141,15 @@
 }
 
 .statusBotao {
-  border: 1px solid var(--linha);
-  background: transparent;
-  color: var(--tinta);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: white;
+  color: var(--admin-texto);
   font-size: 9px;
   letter-spacing: 0.9px;
   padding: 11px 15px;
 }
 
 .statusAtivo {
-  background: var(--tinta);
-  color: var(--papel);
+  background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
+  color: #f2efe9;
 }

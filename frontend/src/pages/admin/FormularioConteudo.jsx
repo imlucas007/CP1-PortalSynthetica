@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   atualizarConteudo,
   criarConteudo,
   listarEditorias,
   obterConteudo,
-} from "../api/client";
+} from "../../api/client";
+import glass from "../../styles/glass.module.css";
 import styles from "./FormularioConteudo.module.css";
 
 const VAZIO = {
@@ -18,8 +20,10 @@ const VAZIO = {
   status: "rascunho",
 };
 
-export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
-  const ehEdicao = Boolean(conteudoId);
+export default function FormularioConteudo() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const ehEdicao = Boolean(id);
   const [editorias, setEditorias] = useState([]);
   const [form, setForm] = useState(VAZIO);
   const [meta, setMeta] = useState(null);
@@ -33,7 +37,7 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
 
   useEffect(() => {
     if (!ehEdicao) return;
-    obterConteudo(conteudoId)
+    obterConteudo(id)
       .then((c) => {
         setForm({
           titulo: c.titulo,
@@ -49,7 +53,7 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
       })
       .catch((e) => setErro(e.message))
       .finally(() => setCarregando(false));
-  }, [conteudoId, ehEdicao]);
+  }, [id, ehEdicao]);
 
   function atualizarCampo(campo, valor) {
     setForm((atual) => ({ ...atual, [campo]: valor }));
@@ -66,11 +70,11 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
         tempo_leitura_min: Number(form.tempo_leitura_min),
       };
       if (ehEdicao) {
-        await atualizarConteudo(conteudoId, payload);
+        await atualizarConteudo(id, payload);
       } else {
         await criarConteudo(payload);
       }
-      onSalvo();
+      navigate("/admin/conteudos");
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -88,7 +92,7 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
 
   return (
     <div className={styles.pagina}>
-      <button className={`mono ${styles.voltar}`} onClick={onVoltar}>
+      <button className={`mono ${styles.voltar}`} onClick={() => navigate("/admin/conteudos")}>
         ← CONTEÚDOS
       </button>
 
@@ -106,7 +110,7 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
           )}
         </div>
         <div className={styles.acoesTopo}>
-          <button className={`mono ${styles.cancelar}`} onClick={onVoltar}>
+          <button className={`mono ${styles.cancelar}`} onClick={() => navigate("/admin/conteudos")}>
             CANCELAR
           </button>
           <button className={`mono ${styles.salvar}`} onClick={salvar} disabled={salvando}>
@@ -125,13 +129,18 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
           <Campo label="CHAMADA">
             <input value={form.chamada} onChange={(e) => atualizarCampo("chamada", e.target.value)} />
           </Campo>
-          <Campo label="CORPO DA MATÉRIA">
-            <textarea
-              rows={8}
-              value={form.corpo}
-              onChange={(e) => atualizarCampo("corpo", e.target.value)}
-            />
-          </Campo>
+          <div>
+            <p className={`mono ${styles.rotulo}`}>CORPO DA MATÉRIA</p>
+            <div className={`${glass.vidro} ${styles.caixaVidro}`}>
+              <div className={glass.vidroConteudo}>
+                <textarea
+                  rows={8}
+                  value={form.corpo}
+                  onChange={(e) => atualizarCampo("corpo", e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className={styles.colunaLateral}>
@@ -172,7 +181,7 @@ export default function FormularioConteudo({ conteudoId, onVoltar, onSalvo }) {
               onChange={(e) => atualizarCampo("palavra_chave", e.target.value)}
             />
           </Campo>
-          <div className={styles.campo}>
+          <div>
             <p className={`mono ${styles.rotulo}`}>STATUS</p>
             <div className={styles.statusOpcoes}>
               {["rascunho", "publicado"].map((opcao) => (
