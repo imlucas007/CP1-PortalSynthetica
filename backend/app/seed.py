@@ -107,3 +107,75 @@ def seed_se_vazio(db: Session):
         )
 
     db.commit()
+
+
+def seed_cartas_se_vazio(db: Session):
+    if db.query(models.Carta).count() > 0:
+        return
+
+    conteudos_por_titulo = {c.titulo: c for c in db.query(models.Conteudo).all()}
+
+    cartas = [
+        dict(
+            assinante_nome="ISA",
+            assinante_numero="#0412",
+            conteudo=conteudos_por_titulo["Quem assina o algoritmo"],
+            assunto='Sobre "Quem assina o algoritmo"',
+            texto="A justificativa da escolha apareceu, mas eu queria saber quais sinais pesaram mais.",
+            status=models.StatusCarta.PENDENTE,
+        ),
+        dict(
+            assinante_nome="RUAN",
+            assinante_numero="#0291",
+            conteudo=None,
+            assunto="Sobre a edição #07",
+            texto="Achei a proporção desequilibrada este mês, mesmo tendo ajustado a ficha.",
+            status=models.StatusCarta.PENDENTE,
+        ),
+        dict(
+            assinante_nome="CLARA",
+            assinante_numero="#0355",
+            conteudo=conteudos_por_titulo["A máquina que aprendeu a ver"],
+            assunto='Sobre "A máquina que aprendeu a ver"',
+            texto="Faltou citar o caso de São Paulo em 2039, que é o mais próximo do argumento.",
+            status=models.StatusCarta.PENDENTE,
+        ),
+        dict(
+            assinante_nome="MARCO",
+            assinante_numero="#0180",
+            conteudo=conteudos_por_titulo["Réplicas e replicantes"],
+            assunto='Sobre "Réplicas e replicantes"',
+            texto="Ótimo texto, mudou como eu vejo o tema.",
+            status=models.StatusCarta.APROVADA,
+        ),
+        dict(
+            assinante_nome="NADIA",
+            assinante_numero="#0099",
+            conteudo=conteudos_por_titulo["O futuro já foi imaginado antes"],
+            assunto='Sobre "O futuro já foi imaginado antes"',
+            texto="Discordo do recorte, mas a curadoria foi honesta.",
+            status=models.StatusCarta.APROVADA,
+        ),
+        dict(
+            assinante_nome="BRUNO",
+            assinante_numero="#0044",
+            conteudo=None,
+            assunto="Sobre o app",
+            texto="Mensagem fora do escopo editorial.",
+            status=models.StatusCarta.RECUSADA,
+        ),
+    ]
+
+    for carta in cartas:
+        db.add(
+            models.Carta(
+                assinante_nome=carta["assinante_nome"],
+                assinante_numero=carta["assinante_numero"],
+                conteudo_id=carta["conteudo"].id if carta["conteudo"] else None,
+                assunto=carta["assunto"],
+                texto=carta["texto"],
+                status=carta["status"],
+            )
+        )
+
+    db.commit()

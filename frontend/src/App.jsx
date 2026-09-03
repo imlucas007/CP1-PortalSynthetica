@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AdminShell from "./admin/AdminShell";
 import Painel from "./pages/admin/Painel";
 import AdminConteudos from "./pages/admin/AdminConteudos";
+import Cartas from "./pages/admin/Cartas";
 
 export default function App() {
   return (
@@ -20,6 +21,14 @@ export default function App() {
         element={
           <AdminShell>
             <AdminConteudos />
+          </AdminShell>
+        }
+      />
+      <Route
+        path="/admin/cartas"
+        element={
+          <AdminShell>
+            <Cartas />
           </AdminShell>
         }
       />

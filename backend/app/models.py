@@ -21,6 +21,12 @@ class StatusConteudo(str, enum.Enum):
     PUBLICADO = "publicado"
 
 
+class StatusCarta(str, enum.Enum):
+    PENDENTE = "pendente"
+    APROVADA = "aprovada"
+    RECUSADA = "recusada"
+
+
 class Usuario(Base):
     __tablename__ = "usuarios"
 
@@ -110,3 +116,20 @@ class Favorito(Base):
 
     conteudo = relationship("Conteudo", back_populates="favoritos")
     usuario = relationship("Usuario", back_populates="favoritos")
+
+
+class Carta(Base):
+    """Carta de um assinante à redação, ligada (opcionalmente) a um conteúdo específico."""
+
+    __tablename__ = "cartas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    assinante_nome = Column(String(80), nullable=False)
+    assinante_numero = Column(String(20), nullable=False)
+    conteudo_id = Column(Integer, ForeignKey("conteudos.id"), nullable=True)
+    assunto = Column(String(200), nullable=False)
+    texto = Column(Text, nullable=False)
+    status = Column(Enum(StatusCarta), nullable=False, default=StatusCarta.PENDENTE)
+    criado_em = Column(DateTime, default=datetime.utcnow)
+
+    conteudo = relationship("Conteudo")

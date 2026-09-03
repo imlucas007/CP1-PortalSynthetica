@@ -49,3 +49,18 @@ export function excluirConteudo(id) {
 export function listarEditorias() {
   return requisicao("/editorias");
 }
+
+export function listarCartas({ status, busca } = {}) {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  if (busca) params.set("busca", busca);
+  const query = params.toString();
+  return requisicao(`/cartas${query ? `?${query}` : ""}`);
+}
+
+export function atualizarCarta(id, dados) {
+  return requisicao(`/cartas/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(dados),
+  });
+}

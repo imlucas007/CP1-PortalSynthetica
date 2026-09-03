@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from .models import StatusConteudo
+from .models import StatusCarta, StatusConteudo
 
 
 class CategoriaOut(BaseModel):
@@ -62,3 +62,19 @@ class ConteudoOut(ConteudoBase):
     autor: UsuarioOut
     total_comentarios: int = 0
     total_favoritos: int = 0
+
+
+class CartaUpdate(BaseModel):
+    status: StatusCarta
+
+
+class CartaOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    assinante_nome: str
+    assinante_numero: str
+    conteudo_id: Optional[int] = None
+    assunto: str
+    texto: str
+    status: StatusCarta
+    criado_em: datetime
