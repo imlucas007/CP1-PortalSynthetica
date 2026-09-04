@@ -1,15 +1,17 @@
 from typing import Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from . import models, schemas
+from . import auth, models, schemas
 from .database import Base, engine, get_db
+from .migracoes import aplicar_migracoes
 from .seed import seed_cartas_se_vazio, seed_se_vazio
 
 Base.metadata.create_all(bind=engine)
+aplicar_migracoes(engine)
 
 with Session(engine) as db:
     seed_se_vazio(db)
@@ -42,6 +44,93 @@ def _com_contagens(db: Session, conteudo: models.Conteudo) -> models.Conteudo:
 @app.get("/")
 def raiz():
     return {"servico": "Synthetica API", "status": "ok"}
+
+
+def _usuario_autenticado(
+    authorization: Optional[str] = Header(None), db: Session = Depends(get_db)
+) -> models.Usuario:
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Não autenticado")
+    token = authorization.split(" ", 1)[1].strip()
+    usuario = db.query(models.Usuario).filter(models.Usuario.token == token).first()
+    if not usuario:
+        raise HTTPException(status_code=401, detail="Sessão inválida")
+    return usuario
+
+
+@app.post("/auth/cadastro", response_model=schemas.SessaoOut, status_code=201)
+def cadastrar(dados: schemas.CadastroIn, db: Session = Depends(get_db)):
+    if db.query(models.Usuario).filter(models.Usuario.email == dados.email).first():
+        raise HTTPException(status_code=409, detail="Já existe uma conta com esse e-mail")
+    if len(dados.senha) < 8:
+        raise HTTPException(status_code=400, detail="A senha precisa ter pelo menos 8 caracteres")
+
+    prefs = dados.preferencias
+    usuario = models.Usuario(
+        nome=dados.email.split("@")[0].upper(),
+        email=dados.email,
+        papel="assinante",
+        senha_hash=auth.gerar_hash_senha(dados.senha),
+        token=auth.gerar_token(),
+        proporcao_avancos=prefs.proporcao_avancos if prefs else None,
+        temas=",".join(prefs.temas) if prefs and prefs.temas else None,
+        perfil=prefs.perfil if prefs else None,
+        tempo=prefs.tempo if prefs else None,
+    )
+    db.add(usuario)
+    db.commit()
+    db.refresh(usuario)
+    return schemas.SessaoOut(token=usuario.token, assinante=usuario)
+
+
+@app.post("/auth/login", response_model=schemas.SessaoOut)
+def entrar(dados: schemas.LoginIn, db: Session = Depends(get_db)):
+    usuario = db.query(models.Usuario).filter(models.Usuario.email == dados.email).first()
+    if not usuario or not usuario.senha_hash or not auth.verificar_senha(dados.senha, usuario.senha_hash):
+        raise HTTPException(status_code=401, detail="E-mail ou senha incorretos")
+    usuario.token = auth.gerar_token()
+    db.commit()
+    db.refresh(usuario)
+    return schemas.SessaoOut(token=usuario.token, assinante=usuario)
+
+
+@app.get("/auth/eu", response_model=schemas.AssinanteOut)
+def eu(usuario: models.Usuario = Depends(_usuario_autenticado)):
+    return usuario
+
+
+@app.patch("/auth/preferencias", response_model=schemas.AssinanteOut)
+def atualizar_preferencias(
+    dados: schemas.PreferenciasOnboarding,
+    usuario: models.Usuario = Depends(_usuario_autenticado),
+    db: Session = Depends(get_db),
+):
+    if dados.proporcao_avancos is not None:
+        usuario.proporcao_avancos = dados.proporcao_avancos
+    if dados.temas is not None:
+        usuario.temas = ",".join(dados.temas)
+    if dados.perfil is not None:
+        usuario.perfil = dados.perfil
+    if dados.tempo is not None:
+        usuario.tempo = dados.tempo
+    db.commit()
+    db.refresh(usuario)
+    return usuario
+
+
+@app.delete("/auth/preferencias/{campo}", response_model=schemas.AssinanteOut)
+def apagar_sinal(
+    campo: str,
+    usuario: models.Usuario = Depends(_usuario_autenticado),
+    db: Session = Depends(get_db),
+):
+    campos_validos = {"proporcao_avancos", "temas", "perfil", "tempo"}
+    if campo not in campos_validos:
+        raise HTTPException(status_code=400, detail="Sinal desconhecido")
+    setattr(usuario, campo, None)
+    db.commit()
+    db.refresh(usuario)
+    return usuario
 
 
 @app.get("/categorias", response_model=list[schemas.CategoriaOut])

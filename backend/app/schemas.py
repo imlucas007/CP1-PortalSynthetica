@@ -78,3 +78,38 @@ class CartaOut(BaseModel):
     texto: str
     status: StatusCarta
     criado_em: datetime
+
+
+class PreferenciasOnboarding(BaseModel):
+    proporcao_avancos: Optional[int] = None
+    temas: Optional[list[str]] = None
+    perfil: Optional[str] = None
+    tempo: Optional[str] = None
+
+
+class CadastroIn(BaseModel):
+    email: str
+    senha: str
+    preferencias: Optional[PreferenciasOnboarding] = None
+
+
+class LoginIn(BaseModel):
+    email: str
+    senha: str
+
+
+class AssinanteOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    nome: str
+    email: str
+    papel: str
+    proporcao_avancos: Optional[int] = None
+    temas: Optional[str] = None
+    perfil: Optional[str] = None
+    tempo: Optional[str] = None
+
+
+class SessaoOut(BaseModel):
+    token: str
+    assinante: AssinanteOut

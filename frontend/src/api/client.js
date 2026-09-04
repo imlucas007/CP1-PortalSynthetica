@@ -1,9 +1,13 @@
 const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 async function requisicao(caminho, opcoes = {}) {
+  const { token, ...resto } = opcoes;
   const resposta = await fetch(`${BASE_URL}${caminho}`, {
-    headers: { "Content-Type": "application/json" },
-    ...opcoes,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    ...resto,
   });
 
   if (!resposta.ok) {
@@ -63,4 +67,34 @@ export function atualizarCarta(id, dados) {
     method: "PATCH",
     body: JSON.stringify(dados),
   });
+}
+
+export function cadastrar({ email, senha, preferencias }) {
+  return requisicao("/auth/cadastro", {
+    method: "POST",
+    body: JSON.stringify({ email, senha, preferencias }),
+  });
+}
+
+export function entrar({ email, senha }) {
+  return requisicao("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, senha }),
+  });
+}
+
+export function obterAssinanteAtual(token) {
+  return requisicao("/auth/eu", { token });
+}
+
+export function atualizarPreferenciasAssinante(token, dados) {
+  return requisicao("/auth/preferencias", {
+    method: "PATCH",
+    token,
+    body: JSON.stringify(dados),
+  });
+}
+
+export function apagarSinalAssinante(token, campo) {
+  return requisicao(`/auth/preferencias/${campo}`, { method: "DELETE", token });
 }

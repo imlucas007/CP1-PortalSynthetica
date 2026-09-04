@@ -34,6 +34,15 @@ class Usuario(Base):
     nome = Column(String(120), nullable=False)
     email = Column(String(160), nullable=False, unique=True)
     papel = Column(String(40), nullable=False, default="editor")
+    senha_hash = Column(String(200), nullable=True)
+    token = Column(String(64), nullable=True, unique=True)
+    criado_em = Column(DateTime, default=datetime.utcnow)
+
+    # Sinais da Ficha de Assinatura (onboarding), usados na Home e na Ficha do assinante.
+    proporcao_avancos = Column(Integer, nullable=True)
+    temas = Column(String(300), nullable=True)
+    perfil = Column(String(20), nullable=True)
+    tempo = Column(String(20), nullable=True)
 
     conteudos = relationship("Conteudo", back_populates="autor")
     comentarios = relationship("Comentario", back_populates="usuario")
