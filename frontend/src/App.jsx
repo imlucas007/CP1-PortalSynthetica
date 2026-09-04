@@ -7,7 +7,12 @@ import FichaAssinatura from "./onboarding/FichaAssinatura";
 import Cadastro from "./onboarding/Cadastro";
 import Login from "./onboarding/Login";
 import FichaAssinante from "./onboarding/FichaAssinante";
+import Checkout from "./onboarding/Checkout";
+import AssinaturaConfirmada from "./onboarding/AssinaturaConfirmada";
+import CancelarAssinatura from "./onboarding/CancelarAssinatura";
 import Home from "./reader/Home";
+import Sumario from "./reader/Sumario";
+import Leitor from "./reader/Leitor";
 
 export default function App() {
   return (
@@ -20,7 +25,12 @@ export default function App() {
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/login" element={<Login />} />
       <Route path="/assinante" element={<FichaAssinante />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/assinatura-confirmada" element={<AssinaturaConfirmada />} />
+      <Route path="/cancelar-assinatura" element={<CancelarAssinatura />} />
       <Route path="/home" element={<Home />} />
+      <Route path="/sumario" element={<Sumario />} />
+      <Route path="/leitura/:id" element={<Leitor />} />
 
       <Route path="/admin" element={<Navigate to="/admin/painel" replace />} />
       <Route

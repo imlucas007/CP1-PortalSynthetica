@@ -1,0 +1,232 @@
+.pagina {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #f9f8f7 0%, #efeeec 50%, #f4f3f1 100%);
+  color: var(--admin-texto);
+}
+
+.halo {
+  position: absolute;
+  top: 40px;
+  left: 5%;
+  width: 90%;
+  max-width: 1300px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.barra {
+  position: relative;
+  margin: 32px 60px;
+  border-radius: 999px;
+}
+
+.barra > div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px 12px 26px;
+}
+
+.voltar {
+  background: none;
+  color: var(--admin-apoio);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+
+.marca {
+  flex: 1;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.ferramentas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ferramenta {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.25px solid rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+
+.paginas {
+  background: linear-gradient(172deg, #121217 8%, #3d4254 85%);
+  color: white;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+}
+
+.spread {
+  position: relative;
+  margin: 8px 172px 0;
+  border-radius: 22px;
+  display: flex;
+  min-height: 500px;
+  box-shadow: 0px 26px 56px 0px rgba(66, 71, 92, 0.26);
+}
+
+.pagEsquerda,
+.pagDireita {
+  flex: 1;
+  min-width: 0;
+  padding: 52px 44px 40px 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vinco {
+  width: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(140, 145, 161, 0) 0%,
+    rgba(89, 94, 112, 0.26) 50%,
+    rgba(140, 145, 161, 0) 100%
+  );
+}
+
+.rotuloCapa {
+  color: #9499a8;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+}
+
+.titulo {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 0.98;
+  letter-spacing: -1.2px;
+  margin: 0;
+}
+
+.autoria {
+  color: #9499a8;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+
+.lead {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.32;
+  color: var(--admin-apoio);
+  margin: 0;
+}
+
+.corpo {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--admin-apoio);
+  margin: 0;
+}
+
+.gradienteAnimado {
+  height: 220px;
+  border-radius: 22px;
+  background: linear-gradient(120deg, #ffe99e, #8178ff, #ff009c, #ffe99e);
+  background-size: 300% 300%;
+  animation: fluir 10s ease infinite;
+}
+
+@keyframes fluir {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.figura {
+  color: #9499a8;
+  font-size: 9px;
+  letter-spacing: 0.6px;
+}
+
+.justificativa {
+  background: #f0f1f5;
+  border-radius: 999px;
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+  font-size: 9px;
+  align-self: flex-start;
+}
+
+.justificativa > span:first-child {
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.justificativaTexto {
+  color: #9499a8;
+}
+
+.arraste {
+  margin: 40px auto 0;
+  width: fit-content;
+  border-radius: 999px;
+}
+
+.arraste > div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 26px;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+}
+
+.setaPagina {
+  background: none;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--admin-texto);
+}
+
+.setaPagina:disabled {
+  opacity: 0.3;
+}
+
+.progressoTrilho {
+  position: relative;
+  margin: 24px 340px 0;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(11, 11, 14, 0.1);
+}
+
+.progressoPercorrido {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(179deg, #121217 8%, #3d4254 85%);
+}
+
+.marcador {
+  position: absolute;
+  top: -7px;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%);
+}
