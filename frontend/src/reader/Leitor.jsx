@@ -52,6 +52,9 @@ export default function Leitor() {
         </div>
       </div>
 
+      {anterior && <div className={`${styles.espiada} ${styles.espiadaEsquerda}`} />}
+      {proximo && <div className={`${styles.espiada} ${styles.espiadaDireita}`} />}
+
       <div className={`${glass.vidro} ${styles.spread}`}>
         <div className={`${glass.vidroConteudo} ${styles.spreadConteudo}`}>
           <div className={styles.pagEsquerda}>
@@ -108,9 +111,17 @@ export default function Leitor() {
         </div>
       </div>
 
-      <div className={styles.progressoTrilho}>
-        <div className={styles.progressoPercorrido} style={{ width: `${progresso}%` }} />
-        <img src={marcador} alt="" className={styles.marcador} style={{ left: `${progresso}%` }} />
+      <div className={styles.progresso}>
+        <span className={`mono ${styles.progressoLabel}`}>
+          P. {ordenados[0]?.pagina ?? "—"}
+        </span>
+        <div className={styles.progressoTrilho}>
+          <div className={styles.progressoPercorrido} style={{ width: `${progresso}%` }} />
+          <img src={marcador} alt="" className={styles.marcador} style={{ left: `${progresso}%` }} />
+        </div>
+        <span className={`mono ${styles.progressoLabel}`}>
+          P. {ordenados[total - 1]?.pagina ?? "—"}
+        </span>
       </div>
     </div>
   );

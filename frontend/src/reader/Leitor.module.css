@@ -79,6 +79,27 @@
   box-shadow: 0px 26px 56px 0px rgba(66, 71, 92, 0.26);
 }
 
+.espiada {
+  position: absolute;
+  top: 130px;
+  width: 140px;
+  height: 440px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1.25px solid rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  box-shadow: 0px 14px 30px 0px rgba(77, 82, 102, 0.14);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.espiadaEsquerda {
+  left: 20px;
+}
+
+.espiadaDireita {
+  right: 20px;
+}
+
 .spreadConteudo {
   display: flex;
   min-height: 500px;
@@ -212,9 +233,23 @@
   opacity: 0.3;
 }
 
+.progresso {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 172px 0;
+}
+
+.progressoLabel {
+  flex-shrink: 0;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #9499a8;
+}
+
 .progressoTrilho {
   position: relative;
-  margin: 24px 340px 0;
+  flex: 1;
   height: 6px;
   border-radius: 999px;
   background: rgba(11, 11, 14, 0.1);
