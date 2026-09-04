@@ -1,0 +1,224 @@
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    to bottom,
+    var(--admin-fundo-1) 0%,
+    var(--admin-fundo-2) 45%,
+    var(--admin-fundo-3) 100%
+  );
+  color: var(--admin-texto);
+}
+
+/* TopBar */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoBadge img {
+  width: 16px;
+  height: 16px;
+}
+
+.marca p {
+  margin: 0;
+  font-size: 9px;
+  letter-spacing: 0.9px;
+  line-height: 12px;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 36px;
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  font-weight: 500;
+  font-family: "Archivo", sans-serif;
+}
+
+.navDireita {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  font-weight: 500;
+  font-family: "Archivo", sans-serif;
+  flex-shrink: 0;
+}
+
+.buscar {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  padding: 5px 14px;
+  font-family: "Space Mono", monospace;
+}
+
+/* Corpo: sidebar + cartão principal */
+
+.corpo {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.sidebar > div {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.blocoSidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo {
+  padding-top: 14px;
+}
+
+.campoLinha {
+  height: 1px;
+  background: linear-gradient(90deg, #1a1a21 0%, #52576b 100%);
+  margin-bottom: 14px;
+}
+
+.campo:first-child .campoLinha {
+  display: none;
+}
+
+.campoRotulo {
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  color: var(--admin-apoio);
+  margin: 0 0 3px;
+}
+
+.campoValor {
+  font-weight: 700;
+  font-size: 13px;
+  margin: 0;
+}
+
+.barcode {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 36px;
+}
+
+.barras span {
+  display: block;
+  background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
+  border-radius: 999px;
+}
+
+.barcode p {
+  font-size: 9px;
+  letter-spacing: 0.9px;
+  margin: 0;
+}
+
+/* Cartão principal com as duas faces */
+
+.cartaoPrincipal {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  cursor: default;
+}
+
+.camadaConteudo {
+  height: 100%;
+}
+
+.camadaFaceB {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #fdf9f2 0%,
+    #f7eee0 45%,
+    #f4ead8 100%
+  );
+}
+
+.agulha {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  z-index: 2;
+  touch-action: none;
+}
+
+.agulha:active {
+  cursor: grabbing;
+}
+
+.linha {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  background: #6b7387;
+}
+
+.pega {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 14px 11px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--admin-texto);
+  box-shadow: 0px 8px 20px 0px rgba(77, 82, 102, 0.2);
+}

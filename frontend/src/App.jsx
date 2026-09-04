@@ -4,6 +4,7 @@ import Painel from "./pages/admin/Painel";
 import AdminConteudos from "./pages/admin/AdminConteudos";
 import Cartas from "./pages/admin/Cartas";
 import FichaAssinatura from "./onboarding/FichaAssinatura";
+import Home from "./reader/Home";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           pronta, ela assume a rota "/". */}
       <Route path="/" element={<FichaAssinatura />} />
       <Route path="/assinatura" element={<FichaAssinatura />} />
+      <Route path="/home" element={<Home />} />
 
       <Route path="/admin" element={<Navigate to="/admin/painel" replace />} />
       <Route
