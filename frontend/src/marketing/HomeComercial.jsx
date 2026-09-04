@@ -48,7 +48,7 @@ export default function HomeComercial() {
             <a href="#faq">COLUNAS</a>
             <a href="#planos">EDIÇÕES</a>
           </nav>
-          <button className={`mono ${styles.navCta}`} onClick={() => navigate("/assinatura")}>
+          <button className={`mono ${styles.navCta}`} onClick={() => navigate("/checkout")}>
             ASSINAR
           </button>
         </div>
@@ -79,7 +79,7 @@ export default function HomeComercial() {
               você, e mostra o porquê de cada escolha.
             </p>
             <div className={styles.ctas}>
-              <button className={`mono ${styles.ctaPrimario}`} onClick={() => navigate("/assinatura")}>
+              <button className={`mono ${styles.ctaPrimario}`} onClick={() => navigate("/checkout")}>
                 ASSINAR POR R$ 19/MÊS
               </button>
               <button className={`mono ${styles.ctaSecundario}`} onClick={() => navigate("/leitura/1")}>
@@ -238,7 +238,7 @@ export default function HomeComercial() {
                 </ul>
                 <button
                   className={`mono ${styles.planoBotao}`}
-                  onClick={() => navigate("/assinatura")}
+                  onClick={() => navigate("/checkout")}
                 >
                   COMEÇAR AGORA
                 </button>

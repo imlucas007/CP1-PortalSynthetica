@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const sessao = await entrar({ email, senha });
       salvarToken(sessao.token);
-      navigate("/assinante");
+      navigate("/home");
     } catch (e2) {
       setErro(e2.message);
     } finally {
@@ -94,7 +94,7 @@ export default function Login() {
 
           <p className={styles.rodapeCard}>
             Ainda não assina?{" "}
-            <button className={styles.linkAssinar} onClick={() => navigate("/assinatura")}>
+            <button className={styles.linkAssinar} onClick={() => navigate("/")}>
               Ver planos
             </button>
           </p>

@@ -25,7 +25,7 @@ export default function Checkout() {
 
       <div className={`${glass.vidro} ${styles.nav}`}>
         <div className={glass.vidroConteudo}>
-          <button className={`mono ${styles.voltar}`} onClick={() => navigate("/assinatura")}>
+          <button className={`mono ${styles.voltar}`} onClick={() => navigate("/")}>
             ← VOLTAR AOS PLANOS
           </button>
           <button className={`mono ${styles.marca}`} onClick={() => navigate("/")}>

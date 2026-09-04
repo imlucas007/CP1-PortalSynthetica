@@ -63,7 +63,7 @@ export default function Home() {
         <div className={styles.navDireita}>
           <button onClick={() => navigate("/")}>SOBRE</button>
           <button onClick={() => navigate("/sumario")}>EDIÇÕES</button>
-          <button onClick={() => navigate("/assinatura")}>APOIE</button>
+          <button onClick={() => navigate("/checkout")}>APOIE</button>
           <button className={styles.buscar} onClick={() => navigate("/sumario")}>
             BUSCAR
           </button>

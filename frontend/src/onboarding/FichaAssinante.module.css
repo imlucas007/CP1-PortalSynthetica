@@ -175,3 +175,13 @@
   font-size: 12px;
   color: var(--admin-apoio);
 }
+
+.irParaEdicao {
+  align-self: flex-start;
+  background: linear-gradient(176deg, #121217 8%, #3d4254 85%);
+  color: white;
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  padding: 18px 32px;
+  border-radius: 999px;
+}

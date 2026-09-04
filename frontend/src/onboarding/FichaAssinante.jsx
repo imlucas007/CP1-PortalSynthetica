@@ -162,6 +162,10 @@ export default function FichaAssinante() {
         <p className={styles.notaFinal}>
           Nenhum destes sinais sai do Synthetica. A edição é montada aqui, com o acervo daqui.
         </p>
+
+        <button className={`mono ${styles.irParaEdicao}`} onClick={() => navigate("/home")}>
+          IR PARA MINHA EDIÇÃO →
+        </button>
       </div>
     </div>
   );
