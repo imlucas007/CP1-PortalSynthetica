@@ -14,14 +14,12 @@ import CancelarAssinatura from "./onboarding/CancelarAssinatura";
 import Home from "./reader/Home";
 import Sumario from "./reader/Sumario";
 import Leitor from "./reader/Leitor";
+import HomeComercial from "./marketing/HomeComercial";
 
 export default function App() {
   return (
     <Routes>
-      {/* Portal público — em construção: por enquanto a raiz entra direto na
-          ficha de assinatura. Quando a Home comercial (landing) estiver
-          pronta, ela assume a rota "/". */}
-      <Route path="/" element={<FichaAssinatura />} />
+      <Route path="/" element={<HomeComercial />} />
       <Route path="/assinatura" element={<FichaAssinatura />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/login" element={<Login />} />
