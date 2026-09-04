@@ -30,7 +30,9 @@
 }
 
 .nav {
-  position: relative;
+  position: sticky;
+  top: 24px;
+  z-index: 10;
   margin: 40px 60px 0;
   border-radius: 999px;
 }

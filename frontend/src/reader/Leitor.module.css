@@ -18,7 +18,9 @@
 }
 
 .barra {
-  position: relative;
+  position: sticky;
+  top: 32px;
+  z-index: 10;
   margin: 32px 60px;
   border-radius: 999px;
 }

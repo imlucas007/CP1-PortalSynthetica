@@ -10,10 +10,14 @@
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 64px;
+  background: var(--admin-fundo-1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.85);
   font-size: 13px;
   font-weight: 700;

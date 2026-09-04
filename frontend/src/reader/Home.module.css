@@ -14,10 +14,14 @@
 /* TopBar */
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   height: 56px;
   padding: 0 32px;
+  background: var(--admin-fundo-1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.85);
   gap: 24px;
   flex-shrink: 0;
