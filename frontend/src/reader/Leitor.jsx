@@ -23,9 +23,16 @@ export default function Leitor() {
 
   const indice = ordenados.findIndex((c) => c.id === Number(id));
   const total = ordenados.length;
-  const progresso = total ? Math.round(((indice + 1) / total) * 100) : 0;
   const anterior = indice > 0 ? ordenados[indice - 1] : null;
   const proximo = indice >= 0 && indice < total - 1 ? ordenados[indice + 1] : null;
+
+  // Página atual e total de páginas da edição vêm da própria "página" de
+  // cada conteúdo — nada fixo: se a matéria mais avançada da edição mudar
+  // de página no CRUD, o total muda sozinho.
+  const paginaAtual = conteudo.pagina ?? 1;
+  const paginaTotalEdicao = Math.max(paginaAtual, ...ordenados.map((c) => c.pagina ?? 0)) || paginaAtual;
+  const paginaFimMateria = proximo?.pagina != null ? proximo.pagina - 1 : paginaTotalEdicao;
+  const progresso = paginaTotalEdicao > 0 ? Math.round((paginaAtual / paginaTotalEdicao) * 100) : 0;
 
   const paragrafos = conteudo.corpo.split(/\n+/).filter(Boolean);
   const meio = Math.ceil(paragrafos.length / 2);
@@ -46,7 +53,8 @@ export default function Leitor() {
             <button className={`mono ${styles.ferramenta}`}>Aa</button>
             <button className={`mono ${styles.ferramenta}`}>SALVAR</button>
             <span className={`mono ${styles.paginas}`}>
-              {indice >= 0 ? indice + 1 : "…"} / {total || "…"}
+              {paginaFimMateria > paginaAtual ? `${paginaAtual}-${paginaFimMateria}` : paginaAtual} /{" "}
+              {paginaTotalEdicao}
             </span>
           </div>
         </div>
@@ -112,16 +120,12 @@ export default function Leitor() {
       </div>
 
       <div className={styles.progresso}>
-        <span className={`mono ${styles.progressoLabel}`}>
-          P. {ordenados[0]?.pagina ?? "—"}
-        </span>
+        <span className={`mono ${styles.progressoLabel}`}>P. {paginaAtual}</span>
         <div className={styles.progressoTrilho}>
           <div className={styles.progressoPercorrido} style={{ width: `${progresso}%` }} />
           <img src={marcador} alt="" className={styles.marcador} style={{ left: `${progresso}%` }} />
         </div>
-        <span className={`mono ${styles.progressoLabel}`}>
-          P. {ordenados[total - 1]?.pagina ?? "—"}
-        </span>
+        <span className={`mono ${styles.progressoLabel}`}>P. {paginaTotalEdicao}</span>
       </div>
     </div>
   );
