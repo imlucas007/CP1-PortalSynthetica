@@ -76,9 +76,12 @@
   position: relative;
   margin: 8px 172px 0;
   border-radius: 22px;
+  box-shadow: 0px 26px 56px 0px rgba(66, 71, 92, 0.26);
+}
+
+.spreadConteudo {
   display: flex;
   min-height: 500px;
-  box-shadow: 0px 26px 56px 0px rgba(66, 71, 92, 0.26);
 }
 
 .pagEsquerda,

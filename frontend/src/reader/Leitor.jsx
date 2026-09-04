@@ -53,35 +53,37 @@ export default function Leitor() {
       </div>
 
       <div className={`${glass.vidro} ${styles.spread}`}>
-        <div className={styles.pagEsquerda}>
-          <p className={`mono ${styles.rotuloCapa}`}>
-            MATÉRIA {conteudo.editoria.nome.toUpperCase()} · P. {conteudo.pagina ?? "—"}
-          </p>
-          <h1 className={styles.titulo}>{conteudo.titulo}</h1>
-          <p className={`mono ${styles.autoria}`}>
-            POR {conteudo.autor.nome.toUpperCase()} · {conteudo.tempo_leitura_min} MIN
-          </p>
-          <p className={styles.lead}>{conteudo.chamada}</p>
-          {primeiraMetade.map((p, i) => (
-            <p key={i} className={styles.corpo}>
-              {p}
+        <div className={`${glass.vidroConteudo} ${styles.spreadConteudo}`}>
+          <div className={styles.pagEsquerda}>
+            <p className={`mono ${styles.rotuloCapa}`}>
+              MATÉRIA {conteudo.editoria.nome.toUpperCase()} · P. {conteudo.pagina ?? "—"}
             </p>
-          ))}
-        </div>
-        <div className={styles.vinco} />
-        <div className={styles.pagDireita}>
-          <div className={styles.gradienteAnimado} />
-          <p className={`mono ${styles.figura}`}>Fig. 01 · Estudo de forma para esta matéria</p>
-          {segundaMetade.map((p, i) => (
-            <p key={i} className={styles.corpo}>
-              {p}
+            <h1 className={styles.titulo}>{conteudo.titulo}</h1>
+            <p className={`mono ${styles.autoria}`}>
+              POR {conteudo.autor.nome.toUpperCase()} · {conteudo.tempo_leitura_min} MIN
             </p>
-          ))}
-          <div className={styles.justificativa}>
-            <span className="mono">POR QUE ESTA MATÉRIA</span>
-            <span className={`mono ${styles.justificativaTexto}`}>
-              palavra-chave: {conteudo.palavra_chave}
-            </span>
+            <p className={styles.lead}>{conteudo.chamada}</p>
+            {primeiraMetade.map((p, i) => (
+              <p key={i} className={styles.corpo}>
+                {p}
+              </p>
+            ))}
+          </div>
+          <div className={styles.vinco} />
+          <div className={styles.pagDireita}>
+            <div className={styles.gradienteAnimado} />
+            <p className={`mono ${styles.figura}`}>Fig. 01 · Estudo de forma para esta matéria</p>
+            {segundaMetade.map((p, i) => (
+              <p key={i} className={styles.corpo}>
+                {p}
+              </p>
+            ))}
+            <div className={styles.justificativa}>
+              <span className="mono">POR QUE ESTA MATÉRIA</span>
+              <span className={`mono ${styles.justificativaTexto}`}>
+                palavra-chave: {conteudo.palavra_chave}
+              </span>
+            </div>
           </div>
         </div>
       </div>
