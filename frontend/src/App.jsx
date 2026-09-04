@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminShell from "./admin/AdminShell";
+import AdminLogin from "./admin/AdminLogin";
 import Painel from "./pages/admin/Painel";
 import AdminConteudos from "./pages/admin/AdminConteudos";
 import Cartas from "./pages/admin/Cartas";
@@ -33,6 +34,7 @@ export default function App() {
       <Route path="/leitura/:id" element={<Leitor />} />
 
       <Route path="/admin" element={<Navigate to="/admin/painel" replace />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route
         path="/admin/painel"
         element={

@@ -1,5 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
+import { obterAssinanteAtual } from "../api/client";
+import { lerTokenAdmin, limparTokenAdmin } from "./sessaoAdmin";
 import styles from "./AdminShell.module.css";
 
 const LINKS = [
@@ -11,6 +14,41 @@ const LINKS = [
 ];
 
 export default function AdminShell({ children }) {
+  const navigate = useNavigate();
+  const [editor, setEditor] = useState(null);
+  const [verificando, setVerificando] = useState(true);
+
+  useEffect(() => {
+    const token = lerTokenAdmin();
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+    obterAssinanteAtual(token)
+      .then((usuario) => {
+        if (usuario.papel !== "editor") {
+          limparTokenAdmin();
+          navigate("/admin/login");
+          return;
+        }
+        setEditor(usuario);
+      })
+      .catch(() => {
+        limparTokenAdmin();
+        navigate("/admin/login");
+      })
+      .finally(() => setVerificando(false));
+  }, [navigate]);
+
+  function sair() {
+    limparTokenAdmin();
+    navigate("/admin/login");
+  }
+
+  if (verificando || !editor) {
+    return <div className={glass.fundoAdmin} />;
+  }
+
   return (
     <div className={glass.fundoAdmin}>
       <div className={styles.pagina}>
@@ -28,7 +66,12 @@ export default function AdminShell({ children }) {
                 </NavLink>
               ))}
             </nav>
-            <p className="mono">JÚLIA · EDITORA-CHEFE</p>
+            <div className={styles.usuario}>
+              <p className="mono">{editor.nome.toUpperCase()} · EDITORA-CHEFE</p>
+              <button className={`mono ${styles.sair}`} onClick={sair}>
+                SAIR
+              </button>
+            </div>
           </div>
         </header>
 

@@ -2,7 +2,9 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from . import models
+from . import auth, models
+
+SENHA_PADRAO_REDACAO = "redacao2047"
 
 
 def seed_se_vazio(db: Session):
@@ -24,7 +26,12 @@ def seed_se_vazio(db: Session):
     db.flush()
     ed_por_nome = {e.nome: e for e in editorias}
 
-    redacao = models.Usuario(nome="Redação", email="redacao@synthetica.app", papel="editor")
+    redacao = models.Usuario(
+        nome="Júlia",
+        email="redacao@synthetica.app",
+        papel="editor",
+        senha_hash=auth.gerar_hash_senha(SENHA_PADRAO_REDACAO),
+    )
     db.add(redacao)
     db.flush()
 
@@ -106,6 +113,21 @@ def seed_se_vazio(db: Session):
             )
         )
 
+    db.commit()
+
+
+def seed_senha_redacao_se_vazio(db: Session):
+    """Bancos já existentes (criados antes do login da redação existir) não têm
+    senha nos usuários da equipe editorial — preenche sem apagar nada."""
+    editores_sem_senha = (
+        db.query(models.Usuario)
+        .filter(models.Usuario.papel == "editor", models.Usuario.senha_hash.is_(None))
+        .all()
+    )
+    if not editores_sem_senha:
+        return
+    for editor in editores_sem_senha:
+        editor.senha_hash = auth.gerar_hash_senha(SENHA_PADRAO_REDACAO)
     db.commit()
 
 

@@ -8,13 +8,14 @@ from sqlalchemy import func
 from . import auth, models, schemas
 from .database import Base, engine, get_db
 from .migracoes import aplicar_migracoes
-from .seed import seed_cartas_se_vazio, seed_se_vazio
+from .seed import seed_cartas_se_vazio, seed_se_vazio, seed_senha_redacao_se_vazio
 
 Base.metadata.create_all(bind=engine)
 aplicar_migracoes(engine)
 
 with Session(engine) as db:
     seed_se_vazio(db)
+    seed_senha_redacao_se_vazio(db)
     seed_cartas_se_vazio(db)
 
 app = FastAPI(title="Synthetica API", version="1.0.0")
