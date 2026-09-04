@@ -40,7 +40,9 @@ export default function Cadastro() {
 
   return (
     <div className={styles.pagina}>
-      <p className="mono">REVISTA SYNTHETICA</p>
+      <button className={`mono ${styles.marca}`} onClick={() => navigate("/")}>
+        REVISTA SYNTHETICA
+      </button>
       <div className={`${glass.vidro} ${styles.cupom}`}>
         <div className={glass.vidroConteudo}>
           <div className={styles.selo}>

@@ -19,11 +19,28 @@
   font-weight: 700;
 }
 
+.marca {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.usuarioArea {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .usuaria {
   font-size: 11px;
   letter-spacing: 1.1px;
   color: var(--admin-apoio);
   font-weight: 400;
+}
+
+.sair {
+  font-size: 9px;
+  letter-spacing: 1.1px;
+  color: var(--admin-apoio);
 }
 
 .corpo {

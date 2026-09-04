@@ -28,7 +28,9 @@ export default function Checkout() {
           <button className={`mono ${styles.voltar}`} onClick={() => navigate("/assinatura")}>
             ← VOLTAR AOS PLANOS
           </button>
-          <p className={`mono ${styles.marca}`}>SYNTHETICA</p>
+          <button className={`mono ${styles.marca}`} onClick={() => navigate("/")}>
+            SYNTHETICA
+          </button>
           <p className={`mono ${styles.passo}`}>PASSO 2 DE 3</p>
         </div>
       </div>

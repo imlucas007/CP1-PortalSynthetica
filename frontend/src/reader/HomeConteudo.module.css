@@ -85,6 +85,8 @@
 }
 
 .wordmark {
+  display: block;
+  text-align: left;
   font-family: "Archivo", sans-serif;
   font-weight: 900;
   font-size: 100px;
@@ -95,9 +97,12 @@
 }
 
 .categorias {
+  display: block;
+  text-align: left;
   font-weight: 700;
   font-size: 13px;
   margin: 0 0 6px;
+  color: var(--home-texto);
 }
 
 .editorTag {
@@ -164,6 +169,9 @@
 }
 
 .sumarioItem {
+  display: block;
+  width: 100%;
+  text-align: left;
   padding: 14px 24px;
 }
 
@@ -194,9 +202,15 @@
 }
 
 .destaque {
+  display: block;
   flex: 1;
   min-width: 0;
   margin: 0;
+  text-align: left;
+}
+
+.destaque:disabled {
+  cursor: default;
 }
 
 .destaque > div {

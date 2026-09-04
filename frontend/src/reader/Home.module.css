@@ -57,21 +57,23 @@
   display: flex;
   justify-content: center;
   gap: 36px;
-  font-size: 11px;
-  letter-spacing: 1.1px;
-  font-weight: 500;
-  font-family: "Archivo", sans-serif;
 }
 
 .navDireita {
   display: flex;
   align-items: center;
   gap: 28px;
+  flex-shrink: 0;
+}
+
+.nav button,
+.navDireita button {
   font-size: 11px;
   letter-spacing: 1.1px;
   font-weight: 500;
   font-family: "Archivo", sans-serif;
-  flex-shrink: 0;
+  color: var(--admin-texto);
+  white-space: nowrap;
 }
 
 .buscar {

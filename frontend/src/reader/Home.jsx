@@ -1,6 +1,8 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
 import HomeConteudo from "./HomeConteudo";
+import { listarConteudos } from "../api/client";
 import { lerPreferencias } from "../onboarding/preferencias";
 import logo from "../assets/home/logo.svg";
 import styles from "./Home.module.css";
@@ -8,10 +10,18 @@ import styles from "./Home.module.css";
 const BARRAS = [6, 2, 4, 2, 8, 2, 2, 4, 6, 2, 4, 2, 2, 6, 2, 4, 2, 6, 2, 2, 4, 2, 6, 2, 2, 4, 6, 2, 2, 4, 2];
 
 export default function Home() {
+  const navigate = useNavigate();
   const preferencias = lerPreferencias();
   const [divisoria, setDivisoria] = useState(preferencias.proporcaoAvancos ?? 62);
   const [arrastando, setArrastando] = useState(false);
+  const [conteudos, setConteudos] = useState([]);
   const cartaoRef = useRef(null);
+
+  useEffect(() => {
+    listarConteudos({ status: "publicado" }).then((itens) =>
+      setConteudos([...itens].sort((a, b) => (a.pagina ?? 999) - (b.pagina ?? 999)))
+    );
+  }, []);
 
   const calcularValor = useCallback((clientX) => {
     const cartao = cartaoRef.current;
@@ -35,7 +45,7 @@ export default function Home() {
   return (
     <div className={styles.pagina}>
       <div className={styles.topbar}>
-        <div className={styles.marca}>
+        <button className={styles.marca} onClick={() => navigate("/home")}>
           <span className={styles.logoBadge}>
             <img src={logo} alt="" />
           </span>
@@ -43,18 +53,20 @@ export default function Home() {
             <p>REVISTA</p>
             <p>SYNTHETICA</p>
           </div>
-        </div>
+        </button>
         <nav className={styles.nav}>
-          <span>PESQUISA</span>
-          <span>REPORTAGENS</span>
-          <span>ENSAIOS</span>
-          <span>COLUNAS</span>
+          <button onClick={() => navigate("/sumario")}>PESQUISA</button>
+          <button onClick={() => navigate("/sumario")}>REPORTAGENS</button>
+          <button onClick={() => navigate("/sumario")}>ENSAIOS</button>
+          <button onClick={() => navigate("/sumario")}>COLUNAS</button>
         </nav>
         <div className={styles.navDireita}>
-          <span>SOBRE</span>
-          <span>EDIÇÕES</span>
-          <span>APOIE</span>
-          <span className={styles.buscar}>BUSCAR</span>
+          <button onClick={() => navigate("/")}>SOBRE</button>
+          <button onClick={() => navigate("/sumario")}>EDIÇÕES</button>
+          <button onClick={() => navigate("/assinatura")}>APOIE</button>
+          <button className={styles.buscar} onClick={() => navigate("/sumario")}>
+            BUSCAR
+          </button>
         </div>
       </div>
 
@@ -89,13 +101,13 @@ export default function Home() {
           onTouchEnd={() => setArrastando(false)}
         >
           <div className={`${glass.vidroConteudo} ${styles.camadaConteudo}`}>
-            <HomeConteudo faceB={false} />
+            <HomeConteudo faceB={false} conteudos={conteudos} />
           </div>
           <div
             className={styles.camadaFaceB}
             style={{ clipPath: `inset(0 0 0 ${divisoria}%)` }}
           >
-            <HomeConteudo faceB />
+            <HomeConteudo faceB conteudos={conteudos} />
           </div>
 
           <div

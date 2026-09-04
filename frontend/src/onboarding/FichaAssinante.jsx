@@ -77,10 +77,23 @@ export default function FichaAssinante() {
   return (
     <div className={styles.pagina}>
       <div className={styles.topbar}>
-        <p className="mono">REVISTA SYNTHETICA</p>
-        <p className={`mono ${styles.usuaria}`}>
-          {assinante.nome} · ASSINANTE #{String(assinante.id).padStart(4, "0")}
-        </p>
+        <button className={`mono ${styles.marca}`} onClick={() => navigate("/home")}>
+          REVISTA SYNTHETICA
+        </button>
+        <div className={styles.usuarioArea}>
+          <p className={`mono ${styles.usuaria}`}>
+            {assinante.nome} · ASSINANTE #{String(assinante.id).padStart(4, "0")}
+          </p>
+          <button
+            className={`mono ${styles.sair}`}
+            onClick={() => {
+              limparToken();
+              navigate("/");
+            }}
+          >
+            SAIR
+          </button>
+        </div>
       </div>
 
       <div className={styles.corpo}>

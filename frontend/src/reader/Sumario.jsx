@@ -26,7 +26,9 @@ export default function Sumario() {
   return (
     <div className={styles.pagina}>
       <div className={styles.topbar}>
-        <p className="mono">REVISTA SYNTHETICA</p>
+        <button className={`mono ${styles.marca}`} onClick={() => navigate("/home")}>
+          REVISTA SYNTHETICA
+        </button>
         <p className={`mono ${styles.usuaria}`}>ISA · ASSINANTE</p>
       </div>
 

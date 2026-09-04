@@ -34,7 +34,9 @@ export default function CancelarAssinatura() {
   return (
     <div className={styles.pagina}>
       <img src={luzHalo} alt="" className={styles.halo} />
-      <p className={`mono ${styles.marca}`}>SYNTHETICA</p>
+      <button className={`mono ${styles.marca}`} onClick={() => navigate("/assinante")}>
+        SYNTHETICA
+      </button>
 
       <div className={`${glass.vidro} ${styles.card}`}>
         <div className={glass.vidroConteudo}>

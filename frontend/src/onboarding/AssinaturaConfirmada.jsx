@@ -12,7 +12,9 @@ export default function AssinaturaConfirmada() {
   return (
     <div className={styles.pagina}>
       <img src={luzHalo} alt="" className={styles.halo} />
-      <p className={`mono ${styles.marca}`}>SYNTHETICA</p>
+      <button className={`mono ${styles.marca}`} onClick={() => navigate("/home")}>
+        SYNTHETICA
+      </button>
 
       <div className={`${glass.vidro} ${styles.card}`}>
         <div className={glass.vidroConteudo}>

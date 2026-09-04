@@ -40,7 +40,9 @@ export default function Login() {
       <img src={gota2} alt="" className={styles.gota2} />
       <img src={gota3} alt="" className={styles.gota3} />
 
-      <p className={`mono ${styles.marca}`}>SYNTHETICA</p>
+      <button className={`mono ${styles.marca}`} onClick={() => navigate("/")}>
+        SYNTHETICA
+      </button>
       <p className={`mono ${styles.acesso}`}>ACESSO DO ASSINANTE</p>
       <p className={`mono ${styles.edicao}`}>EDIÇÃO #07 · AGO 2047</p>
 

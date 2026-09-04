@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import glass from "../styles/glass.module.css";
 import styles from "./Cupom.module.css";
 
@@ -15,7 +16,9 @@ export default function Cupom({
 }) {
   return (
     <div className={styles.pagina}>
-      <p className="mono">REVISTA SYNTHETICA</p>
+      <Link to="/" className={`mono ${styles.marca}`}>
+        REVISTA SYNTHETICA
+      </Link>
       <div className={`${glass.vidro} ${styles.cupom}`}>
         <div className={glass.vidroConteudo}>
           <div className={styles.cabecalho}>
