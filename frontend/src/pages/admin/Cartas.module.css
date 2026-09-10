@@ -64,6 +64,11 @@
   font-size: 13px;
 }
 
+.mensagemOk {
+  color: #1f7a4d;
+  font-size: 13px;
+}
+
 .barraSelecao {
   display: flex;
   align-items: center;
@@ -198,4 +203,16 @@
   color: var(--admin-apoio-fraco);
   font-size: 10px;
   letter-spacing: 1.2px;
+}
+
+@media (max-width: 760px) {
+  .pagina {
+    padding: 20px 16px;
+  }
+  .cartaConteudo {
+    flex-wrap: wrap;
+  }
+  .filtros {
+    flex-wrap: wrap;
+  }
 }

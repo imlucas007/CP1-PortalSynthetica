@@ -201,3 +201,13 @@
   font-family: "Archivo", sans-serif;
   font-size: 13px;
 }
+
+@media (max-width: 620px) {
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+  .card > div {
+    padding: 36px 24px 32px;
+  }
+}

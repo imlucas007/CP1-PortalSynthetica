@@ -1,51 +1,57 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
-import HomeConteudo from "./HomeConteudo";
-import { listarConteudos } from "../api/client";
+import { listarMaterias } from "../api/revista";
+import { obterAssinanteAtual } from "../api/client";
 import { lerPreferencias } from "../onboarding/preferencias";
+import { lerToken } from "../onboarding/sessao";
 import logo from "../assets/home/logo.svg";
 import styles from "./Home.module.css";
 
 const BARRAS = [6, 2, 4, 2, 8, 2, 2, 4, 6, 2, 4, 2, 2, 6, 2, 4, 2, 6, 2, 2, 4, 2, 6, 2, 2, 4, 6, 2, 2, 4, 2];
 
+// Primeira página da edição: manchete de capa em destaque + o resto do
+// sumário numa lista enxuta. A "capa" propriamente dita é a rota /capa.
 export default function Home() {
   const navigate = useNavigate();
-  const preferencias = lerPreferencias();
-  const [divisoria, setDivisoria] = useState(preferencias.proporcaoAvancos ?? 62);
-  const [arrastando, setArrastando] = useState(false);
+  const [divisoria, setDivisoria] = useState(lerPreferencias().proporcaoAvancos ?? 62);
   const [conteudos, setConteudos] = useState([]);
-  const cartaoRef = useRef(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(false);
 
   useEffect(() => {
-    listarConteudos({ status: "publicado" }).then((itens) =>
-      setConteudos([...itens].sort((a, b) => (a.pagina ?? 999) - (b.pagina ?? 999)))
-    );
+    let ativo = true;
+    listarMaterias()
+      .then((itens) => {
+        if (ativo) {
+          setConteudos([...itens].sort((a, b) => (a.pagina ?? 999) - (b.pagina ?? 999)));
+        }
+      })
+      .catch(() => ativo && setErro(true))
+      .finally(() => ativo && setCarregando(false));
+    return () => {
+      ativo = false;
+    };
   }, []);
 
-  const calcularValor = useCallback((clientX) => {
-    const cartao = cartaoRef.current;
-    if (!cartao) return null;
-    const { left, width } = cartao.getBoundingClientRect();
-    const fracao = (clientX - left) / width;
-    return Math.min(96, Math.max(4, Math.round(fracao * 100)));
+  // Com sessão, a proporção que vale é a do servidor (a Ficha grava lá).
+  useEffect(() => {
+    const token = lerToken();
+    if (!token) return;
+    obterAssinanteAtual(token)
+      .then((a) => {
+        if (a.proporcao_avancos != null) setDivisoria(a.proporcao_avancos);
+      })
+      .catch(() => {});
   }, []);
 
-  function mover(e) {
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const novoValor = calcularValor(clientX);
-    if (novoValor !== null) setDivisoria(novoValor);
-  }
-
-  function iniciarArraste(e) {
-    setArrastando(true);
-    mover(e);
-  }
+  const capa = conteudos[0];
+  const resto = conteudos.slice(1);
 
   return (
     <div className={styles.pagina}>
       <div className={styles.topbar}>
-        <button className={styles.marca} onClick={() => navigate("/home")}>
+        <button className={styles.marca} onClick={() => navigate("/capa")}>
           <span className={styles.logoBadge}>
             <img src={logo} alt="" />
           </span>
@@ -62,75 +68,93 @@ export default function Home() {
         </nav>
         <div className={styles.navDireita}>
           <button onClick={() => navigate("/")}>SOBRE</button>
-          <button onClick={() => navigate("/sumario")}>EDIÇÕES</button>
+          <button onClick={() => navigate("/sumario")}>SUMÁRIO</button>
           <button onClick={() => navigate("/checkout")}>APOIE</button>
-          <button className={styles.buscar} onClick={() => navigate("/sumario")}>
-            BUSCAR
-          </button>
         </div>
       </div>
 
-      <div className={styles.corpo}>
-        <aside className={`${glass.vidro} ${styles.sidebar}`}>
-          <div className={glass.vidroConteudo}>
-            <div className={styles.blocoSidebar}>
-              <Campo rotulo="EDIÇÃO" valor="#07" />
-              <Campo rotulo="ANO" valor="02" />
-              <Campo rotulo="DATA" valor="AGO 2047" />
-              <Campo rotulo="DISTRIBUIÇÃO" valor="PERSONALIZADA" />
-              <Campo rotulo="PERIODICIDADE" valor="POR LEITOR" />
+      <main className={styles.corpo}>
+        <header className={styles.cabecalho}>
+          <p className={`mono ${styles.meta}`}>
+            EDIÇÃO #07 · AGO 2047 · DISTRIBUIÇÃO PERSONALIZADA
+          </p>
+          <div className={styles.proporcao}>
+            <div className={styles.proporcaoBarra}>
+              <span style={{ width: `${divisoria}%` }} />
+              <span style={{ width: `${100 - divisoria}%` }} />
             </div>
-            <div className={styles.barcode}>
-              <div className={styles.barras}>
-                {BARRAS.map((largura, i) => (
-                  <span key={i} style={{ width: `${largura}px`, height: `${18 + (i % 3) * 6}px` }} />
-                ))}
+            <div className={`mono ${styles.proporcaoLabels}`}>
+              <span>{divisoria}% AVANÇOS</span>
+              <span>{100 - divisoria}% CULTURA</span>
+            </div>
+          </div>
+        </header>
+
+        {erro && (
+          <div className={styles.estado} role="alert">
+            <p>Não foi possível carregar a edição.</p>
+            <button className={`mono ${styles.tentarNovamente}`} onClick={() => window.location.reload()}>
+              TENTAR DE NOVO
+            </button>
+          </div>
+        )}
+
+        {!erro && capa && (
+          <button
+            className={`${glass.vidro} ${styles.hero}`}
+            onClick={() => navigate(`/leitura/${capa.id}`)}
+          >
+            <div className={`${glass.vidroConteudo} ${styles.heroConteudo}`}>
+              <div className={styles.heroTextos}>
+                <p className={`mono ${styles.heroRotulo}`}>MATÉRIA DE CAPA · {capa.editoria.nome.toUpperCase()}</p>
+                <h1 className={styles.heroTitulo}>{capa.titulo}</h1>
+                <p className={styles.heroOlho}>{capa.chamada}</p>
+                <p className={`mono ${styles.heroAutoria}`}>
+                  POR {capa.autor.nome.toUpperCase()} · {capa.tempo_leitura_min} MIN
+                </p>
+                <span className={`mono ${styles.heroLer}`}>LER MATÉRIA →</span>
               </div>
-              <p className="mono">7 899999 070200</p>
+              <div className={styles.heroMedia}>
+                <div className={styles.heroGradiente} />
+                <span className={`mono ${styles.heroFig}`}>Fig. 01 · estudo de forma</span>
+              </div>
             </div>
-          </div>
-        </aside>
+          </button>
+        )}
 
-        <div
-          ref={cartaoRef}
-          className={`${glass.vidro} ${styles.cartaoPrincipal}`}
-          onMouseMove={(e) => arrastando && mover(e)}
-          onMouseUp={() => setArrastando(false)}
-          onMouseLeave={() => setArrastando(false)}
-          onTouchMove={mover}
-          onTouchEnd={() => setArrastando(false)}
-        >
-          <div className={`${glass.vidroConteudo} ${styles.camadaConteudo}`}>
-            <HomeConteudo faceB={false} conteudos={conteudos} />
-          </div>
-          <div
-            className={styles.camadaFaceB}
-            style={{ clipPath: `inset(0 0 0 ${divisoria}%)` }}
-          >
-            <HomeConteudo faceB conteudos={conteudos} />
-          </div>
+        <ol className={styles.lista}>
+          {carregando && <li className={styles.aviso}>Fechando a edição…</li>}
+          {!carregando && !erro && conteudos.length === 0 && (
+            <li className={styles.aviso}>Nenhuma matéria publicada ainda.</li>
+          )}
+          {resto.map((c) => (
+            <li key={c.id}>
+              <button
+                className={`${glass.vidro} ${styles.item}`}
+                onClick={() => navigate(`/leitura/${c.id}`)}
+              >
+                <div className={`${glass.vidroConteudo} ${styles.itemConteudo}`}>
+                  <span className={`mono ${styles.itemMeta}`}>
+                    P.{String(c.pagina ?? "—").padStart(2, "0")} · {c.editoria.nome.toUpperCase()}
+                  </span>
+                  <span className={styles.itemTitulo}>{c.titulo}</span>
+                  <span className={styles.itemOlho}>{c.chamada}</span>
+                  <span className={`mono ${styles.itemTempo}`}>{c.tempo_leitura_min} MIN</span>
+                </div>
+              </button>
+            </li>
+          ))}
+        </ol>
 
-          <div
-            className={styles.agulha}
-            style={{ left: `${divisoria}%` }}
-            onMouseDown={iniciarArraste}
-            onTouchStart={iniciarArraste}
-          >
-            <div className={styles.linha} />
-            <div className={`mono ${styles.pega}`}>||</div>
+        <footer className={styles.rodape}>
+          <div className={styles.barras}>
+            {BARRAS.map((largura, i) => (
+              <span key={i} style={{ width: `${largura}px`, height: `${16 + (i % 3) * 5}px` }} />
+            ))}
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Campo({ rotulo, valor }) {
-  return (
-    <div className={styles.campo}>
-      <div className={styles.campoLinha} />
-      <p className={`mono ${styles.campoRotulo}`}>{rotulo}</p>
-      <p className={`mono ${styles.campoValor}`}>{valor}</p>
+          <p className="mono">7 899999 070200</p>
+        </footer>
+      </main>
     </div>
   );
 }

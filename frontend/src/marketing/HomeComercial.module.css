@@ -1,5 +1,8 @@
 .pagina {
   position: relative;
+  /* cria contexto de empilhamento próprio: a camada de bolhas (z-index:-1)
+     fica atrás do conteúdo mas ainda na frente do fundo da página */
+  isolation: isolate;
   overflow-x: clip;
   background: linear-gradient(
     to bottom,
@@ -14,13 +17,13 @@
   position: absolute;
   top: -180px;
   left: 12%;
-  width: 76%;
-  height: 760px;
+  width: 104%;
+  height: 780px;
   background: radial-gradient(
     ellipse at center,
-    rgba(180, 190, 255, 0.3) 0%,
-    rgba(210, 200, 255, 0.16) 30%,
-    rgba(255, 210, 230, 0.1) 55%,
+    rgba(180, 190, 255, 0.36) 0%,
+    rgba(210, 200, 255, 0.2) 30%,
+    rgba(255, 210, 230, 0.13) 55%,
     transparent 78%
   );
   filter: blur(50px);
@@ -92,11 +95,23 @@
   flex-wrap: wrap;
 }
 
+/* Só o enquadramento da faixa — a tipografia e o glitch do wordmark vivem
+   no componente GlitchWordmark. */
+.wordmarkFaixa {
+  width: 100%;
+  overflow: hidden;
+  height: clamp(52px, 12.5vw, 168px);
+  margin: 4px 0 4px;
+}
+
 .heroGrade {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 40px;
   align-items: flex-start;
+  margin-top: 28px;
 }
 
 .heroTexto {
@@ -154,38 +169,17 @@
   color: var(--admin-apoio);
 }
 
-.heroWordmarkArea {
-  position: relative;
-  container-type: inline-size;
+.introColuna {
   flex: 2 1 320px;
   min-width: 0;
-  min-height: 420px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.wordmarkGigante {
-  font-family: "Archivo", sans-serif;
-  font-weight: 900;
-  font-size: clamp(28px, 16cqw, 96px);
-  letter-spacing: -2px;
-  text-align: center;
-  line-height: 1;
-  margin: 0;
-  max-width: 100%;
-  color: var(--admin-texto);
-  text-shadow: 3px 0 0 rgba(255, 0, 156, 0.35), -3px 0 0 rgba(80, 120, 255, 0.35);
-  user-select: none;
+  justify-content: flex-end;
+  margin-top: -64px;
 }
 
 .introCard {
-  position: absolute;
-  bottom: -10px;
-  right: 0;
   width: 340px;
-  max-width: 90%;
+  max-width: 100%;
   border-radius: 24px;
 }
 
@@ -220,7 +214,7 @@
 .capa {
   position: relative;
   margin: 100px 60px 0;
-  border-radius: 30px;
+  border-radius: 36px;
 }
 
 .capaConteudo {
@@ -294,7 +288,7 @@
 .valorCard {
   flex: 1;
   min-width: 0;
-  border-radius: 26px;
+  border-radius: 30px;
 }
 
 .valorCard > div {
@@ -338,8 +332,8 @@
 .h2 {
   font-family: "Archivo", sans-serif;
   font-weight: 700;
-  font-size: 38px;
-  letter-spacing: -0.9px;
+  font-size: 42px;
+  letter-spacing: -1px;
   margin: 0 0 14px;
 }
 
@@ -396,7 +390,7 @@
 .artigoCard {
   flex: 1;
   min-width: 0;
-  border-radius: 26px;
+  border-radius: 30px;
   text-align: left;
   cursor: pointer;
 }
@@ -501,6 +495,15 @@
   margin: 0;
 }
 
+.expedienteLink {
+  display: inline-block;
+  margin-top: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--admin-texto);
+  text-decoration: none;
+}
+
 /* PLANOS */
 
 .planos {
@@ -512,7 +515,7 @@
 .planoCard {
   flex: 1;
   min-width: 0;
-  border-radius: 26px;
+  border-radius: 30px;
 }
 
 .planoDestaque {
@@ -602,7 +605,7 @@
 
 .newsletter {
   margin: 110px 60px 0;
-  border-radius: 30px;
+  border-radius: 36px;
 }
 
 .newsletterConteudo {
@@ -693,14 +696,18 @@
 /* RODAPÉ */
 
 .rodape {
-  margin: 110px 60px 0;
-  padding-bottom: 48px;
+  margin: 110px 60px 48px;
+  padding: 52px 56px 40px;
+  border-radius: 36px;
+  background: linear-gradient(173deg, #121217 8%, #3d4254 85%);
+  box-shadow: 0px 20px 48px 0px rgba(51, 56, 77, 0.28);
+  color: #b8bdcc;
 }
 
 .rodapeTopo {
   display: flex;
   gap: 40px;
-  padding: 52px 0;
+  padding-bottom: 44px;
   flex-wrap: wrap;
 }
 
@@ -715,13 +722,14 @@
   font-weight: 900;
   font-size: 28px;
   letter-spacing: -0.6px;
+  color: white;
   margin: 0 0 12px;
 }
 
 .rodapeMarcaTexto {
   font-size: 14px;
   line-height: 1.4;
-  color: var(--admin-apoio);
+  color: #b8bdcc;
   margin: 0;
 }
 
@@ -733,19 +741,19 @@
 .rodapeColunaTitulo {
   font-size: 11px;
   letter-spacing: 1px;
-  color: var(--admin-apoio);
+  color: var(--admin-apoio-fraco);
   margin: 0 0 18px;
 }
 
 .rodapeLink {
   font-size: 14px;
-  color: var(--admin-texto);
+  color: #b8bdcc;
   margin: 0 0 14px;
 }
 
 .rodapeLinha {
   height: 1px;
-  background: rgba(11, 11, 14, 0.1);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .rodapeBase {
@@ -755,7 +763,7 @@
   padding-top: 24px;
   flex-wrap: wrap;
   gap: 16px;
-  color: var(--admin-apoio);
+  color: var(--admin-apoio-fraco);
   font-size: 12px;
 }
 
@@ -764,5 +772,49 @@
   gap: 20px;
   font-size: 10px;
   letter-spacing: 1px;
-  color: var(--admin-apoio);
+  color: #b8bdcc;
+}
+
+/* ------------------------------------------------------------------
+   Responsivo — a página foi construída com flex-wrap, então a maior
+   parte reflui sozinha. Aqui só ajustamos o que ainda estoura ou fica
+   apertado no mobile: a nav, os paddings largos e o H1 fixo.
+   ------------------------------------------------------------------ */
+@media (max-width: 860px) {
+  .nav {
+    margin: 20px 16px 0;
+  }
+  .nav > div {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .navLinks {
+    display: none;
+  }
+  .hero {
+    padding: 48px 20px 0;
+  }
+  .secao {
+    padding: 56px 20px 0;
+  }
+  .capaConteudo,
+  .newsletterConteudo {
+    padding: 32px 24px;
+  }
+  .rodape {
+    padding: 40px 20px 32px;
+  }
+  .h1 {
+    font-size: clamp(30px, 8vw, 52px);
+    letter-spacing: -0.8px;
+  }
+  .h2 {
+    font-size: clamp(24px, 6vw, 38px);
+  }
+  .capaImagem {
+    width: 100%;
+    height: auto;
+  }
 }

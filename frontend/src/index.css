@@ -1,10 +1,6 @@
 :root {
+  /* Tom "papel" usado como fundo neutro em telas fora do visual glass. */
   --papel: #f2efe9;
-  --tinta: #1b4fd8;
-  --apoio: #5c6478;
-  --linha: #1b4fd8;
-  --sinal: #e8341c;
-  --sinal-texto: #ce2a12;
 
   /* Admin (visual "glass" — dashboard, conteúdos, cartas) */
   --admin-fundo-1: #fcfbfa;
@@ -25,12 +21,15 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   background: var(--papel);
-  color: var(--tinta);
+  color: var(--admin-texto);
   font-family: "Archivo", sans-serif;
-  font-variation-settings: "wdth" 100;
 }
 
 button,
@@ -47,6 +46,32 @@ button {
   border: none;
 }
 
+img {
+  max-width: 100%;
+}
+
+/* Foco visível por teclado em qualquer elemento interativo — o reset de
+   button acima remove o outline nativo; sem isto a navegação por Tab fica
+   invisível. */
+:focus-visible {
+  /* currentColor se adapta: em UI clara o contorno fica escuro, em seções
+     escuras (capa, hero) fica claro — visível nos dois casos. */
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .mono {
   font-family: "Space Mono", monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

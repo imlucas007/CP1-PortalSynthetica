@@ -1,3 +1,10 @@
+.carregandoTela {
+  padding: 64px;
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  color: var(--admin-apoio);
+}
+
 .pagina {
   min-height: 100vh;
   background: linear-gradient(
@@ -137,6 +144,34 @@
   letter-spacing: 0.9px;
   color: var(--admin-texto);
   background: white;
+  align-self: flex-start;
+}
+
+.sinalExemplo {
+  color: var(--admin-apoio-fraco);
+  font-weight: 400;
+}
+
+.temasChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 6px;
+}
+
+.temaChip {
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  color: var(--admin-apoio);
+  border: 1px solid rgba(11, 11, 14, 0.16);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: white;
+}
+
+.temaChip:hover {
+  color: var(--admin-sinal-texto);
+  border-color: var(--admin-sinal-texto);
 }
 
 .painelLateral {
@@ -184,4 +219,19 @@
   letter-spacing: 1.4px;
   padding: 18px 32px;
   border-radius: 999px;
+}
+
+@media (max-width: 820px) {
+  .topbar {
+    padding: 16px 20px;
+  }
+  .corpo {
+    padding: 32px 20px;
+  }
+  .colunas {
+    flex-direction: column;
+  }
+  .painelLateral {
+    width: 100%;
+  }
 }

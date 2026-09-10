@@ -200,3 +200,22 @@
   padding: 16px 22px;
   border-radius: 22px;
 }
+
+@media (max-width: 640px) {
+  .tema {
+    width: 100%;
+  }
+  .opcoesPerfil {
+    flex-direction: column;
+  }
+  .opcaoPerfil {
+    padding: 40px 24px;
+    gap: 18px;
+  }
+  .tituloFechamento {
+    font-size: clamp(26px, 7vw, 42px);
+  }
+  .paginaFechamento {
+    padding: 40px 20px;
+  }
+}

@@ -1,12 +1,29 @@
+# Dependências
 node_modules/
 dist/
-.env
-.env.local
 
-backend/venv/
-backend/__pycache__/
-backend/app/__pycache__/
-backend/*.db
+# Ambientes virtuais Python (qualquer nome, qualquer subpasta)
+venv/
+venv_*/
+.venv/
+**/venv/
+**/venv_*/
+**/.venv/
+__pycache__/
 **/__pycache__/
+*.pyc
 
+# Segredos — NUNCA versionar
+.env
+.env.*
+!.env.exemplo
+!.env.example
+
+# Banco local (SQLite de dev/seed)
+*.db
+backend/*.db
+
+# Sistema / editor
 .DS_Store
+.claude/
+*.log

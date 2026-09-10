@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
@@ -26,9 +27,16 @@ with Session(engine) as db:
 
 app = FastAPI(title="Synthetica API", version="1.0.0")
 
+# Em dev libera o Vite (5173); em produção, defina CORS_ORIGINS com a lista
+# real separada por vírgula. "*" com Authorization é aceitável só localmente.
+_origens = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174",
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[o.strip() for o in _origens if o.strip()],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -65,6 +73,14 @@ def _usuario_autenticado(
     return usuario
 
 
+def _exige_editor(usuario: models.Usuario = Depends(_usuario_autenticado)) -> models.Usuario:
+    """Autorização de verdade (não é esconder botão no front): CRUD de
+    conteúdo e moderação de carta só com token de conta `editor`."""
+    if usuario.papel != "editor":
+        raise HTTPException(status_code=403, detail="Acesso restrito à equipe editorial")
+    return usuario
+
+
 @app.post("/auth/cadastro", response_model=schemas.SessaoOut, status_code=201)
 def cadastrar(dados: schemas.CadastroIn, db: Session = Depends(get_db)):
     if db.query(models.Usuario).filter(models.Usuario.email == dados.email).first():
@@ -73,8 +89,9 @@ def cadastrar(dados: schemas.CadastroIn, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="A senha precisa ter pelo menos 8 caracteres")
 
     prefs = dados.preferencias
+    nome = dados.nome.strip() if dados.nome and dados.nome.strip() else dados.email.split("@")[0].upper()
     usuario = models.Usuario(
-        nome=dados.email.split("@")[0].upper(),
+        nome=nome,
         email=dados.email,
         papel="assinante",
         senha_hash=auth.gerar_hash_senha(dados.senha),
@@ -179,17 +196,21 @@ def obter_conteudo(conteudo_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/conteudos", response_model=schemas.ConteudoOut, status_code=201)
-def criar_conteudo(dados: schemas.ConteudoCreate, db: Session = Depends(get_db)):
+def criar_conteudo(
+    dados: schemas.ConteudoCreate,
+    db: Session = Depends(get_db),
+    editor: models.Usuario = Depends(_exige_editor),
+):
     editoria = db.get(models.Editoria, dados.editoria_id)
     if not editoria:
         raise HTTPException(status_code=400, detail="Editoria inválida")
 
     autor_id = dados.autor_id
+    if autor_id is not None and not db.get(models.Usuario, autor_id):
+        raise HTTPException(status_code=400, detail="Autor inválido")
     if not autor_id:
-        primeiro_usuario = db.query(models.Usuario).first()
-        autor_id = primeiro_usuario.id if primeiro_usuario else None
-    if not autor_id:
-        raise HTTPException(status_code=400, detail="Nenhum usuário disponível como autor")
+        # sem autor explícito: assina com a conta do editor logado.
+        autor_id = editor.id
 
     conteudo = models.Conteudo(
         titulo=dados.titulo,
@@ -211,18 +232,23 @@ def criar_conteudo(dados: schemas.ConteudoCreate, db: Session = Depends(get_db))
 @app.put("/conteudos/{conteudo_id}", response_model=schemas.ConteudoOut)
 @app.patch("/conteudos/{conteudo_id}", response_model=schemas.ConteudoOut)
 def atualizar_conteudo(
-    conteudo_id: int, dados: schemas.ConteudoUpdate, db: Session = Depends(get_db)
+    conteudo_id: int,
+    dados: schemas.ConteudoUpdate,
+    db: Session = Depends(get_db),
+    editor: models.Usuario = Depends(_exige_editor),
 ):
     conteudo = db.get(models.Conteudo, conteudo_id)
     if not conteudo:
         raise HTTPException(status_code=404, detail="Conteúdo não encontrado")
 
-    if dados.editoria_id is not None:
-        editoria = db.get(models.Editoria, dados.editoria_id)
-        if not editoria:
-            raise HTTPException(status_code=400, detail="Editoria inválida")
+    campos = dados.model_dump(exclude_unset=True)
 
-    for campo, valor in dados.model_dump(exclude_unset=True).items():
+    if campos.get("editoria_id") is not None and not db.get(models.Editoria, campos["editoria_id"]):
+        raise HTTPException(status_code=400, detail="Editoria inválida")
+    if campos.get("autor_id") is not None and not db.get(models.Usuario, campos["autor_id"]):
+        raise HTTPException(status_code=400, detail="Autor inválido")
+
+    for campo, valor in campos.items():
         setattr(conteudo, campo, valor)
 
     db.commit()
@@ -231,10 +257,19 @@ def atualizar_conteudo(
 
 
 @app.delete("/conteudos/{conteudo_id}", status_code=204)
-def excluir_conteudo(conteudo_id: int, db: Session = Depends(get_db)):
+def excluir_conteudo(
+    conteudo_id: int,
+    db: Session = Depends(get_db),
+    editor: models.Usuario = Depends(_exige_editor),
+):
     conteudo = db.get(models.Conteudo, conteudo_id)
     if not conteudo:
         raise HTTPException(status_code=404, detail="Conteúdo não encontrado")
+    # Cartas apontam pro conteúdo por FK nullable — solta a referência antes
+    # de apagar pra não deixar carta órfã (SQLite não força FK aqui).
+    db.query(models.Carta).filter(models.Carta.conteudo_id == conteudo_id).update(
+        {models.Carta.conteudo_id: None}
+    )
     db.delete(conteudo)
     db.commit()
     return None
@@ -258,7 +293,12 @@ def listar_cartas(
 
 
 @app.patch("/cartas/{carta_id}", response_model=schemas.CartaOut)
-def atualizar_carta(carta_id: int, dados: schemas.CartaUpdate, db: Session = Depends(get_db)):
+def atualizar_carta(
+    carta_id: int,
+    dados: schemas.CartaUpdate,
+    db: Session = Depends(get_db),
+    editor: models.Usuario = Depends(_exige_editor),
+):
     carta = db.get(models.Carta, carta_id)
     if not carta:
         raise HTTPException(status_code=404, detail="Carta não encontrada")

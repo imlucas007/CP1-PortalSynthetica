@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { listarConteudos } from "../../api/client";
+import { listarCartas, listarConteudos } from "../../api/client";
 import glass from "../../styles/glass.module.css";
 import styles from "./Painel.module.css";
 
@@ -8,15 +8,26 @@ const ATIVIDADE = [
   { quando: "HÁ 12 MIN", quem: "JÚLIA", texto: 'publicou "Réplicas e replicantes"' },
   { quando: "HÁ 1 H", quem: "EDITOR-CHEFE IA", texto: "fechou 38 edições do dia" },
   { quando: "HÁ 3 H", quem: "MARCO", texto: "recusou uma carta do assinante #0291" },
-  { quando: "ONTEM 7H02", quem: "SISTEMA", texto: "falhou ao fechar a edição do #0388" },
   { quando: "ONTEM", quem: "NÁDIA", texto: 'criou o rascunho "O trabalho que virou fila"' },
 ];
 
 export default function Painel() {
   const [conteudos, setConteudos] = useState([]);
+  const [conteudosErro, setConteudosErro] = useState(false);
+  // undefined = carregando · null = falhou · número = ok
+  const [cartasPendentes, setCartasPendentes] = useState(undefined);
 
   useEffect(() => {
-    listarConteudos().then(setConteudos).catch(() => {});
+    let ativo = true;
+    listarConteudos()
+      .then((c) => ativo && setConteudos(c))
+      .catch(() => ativo && setConteudosErro(true));
+    listarCartas({ status: "pendente" })
+      .then((cs) => ativo && setCartasPendentes(cs.length))
+      .catch(() => ativo && setCartasPendentes(null));
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   const rascunhos = conteudos.filter((c) => c.status === "rascunho");
@@ -32,6 +43,12 @@ export default function Painel() {
         Terça, 27 de agosto de 2047 · a edição #08 fecha em 4 dias
       </p>
 
+      {conteudosErro && (
+        <p className={styles.subtitulo} role="alert">
+          Não foi possível carregar os conteúdos — os números abaixo podem estar desatualizados.
+        </p>
+      )}
+
       <div className={styles.alertas}>
         <CartaoAlerta
           numero={rascunhos.length}
@@ -44,11 +61,20 @@ export default function Painel() {
           destacado
         />
         <CartaoAlerta
-          numero={3}
+          numero={cartasPendentes ?? "—"}
           titulo="cartas aguardando moderação"
-          descricao="A mais antiga espera há 6 dias"
+          descricao={
+            cartasPendentes === undefined
+              ? "Carregando…"
+              : cartasPendentes === null
+                ? "Não foi possível carregar a fila"
+                : cartasPendentes === 0
+                  ? "Fila zerada"
+                  : "Moderação define o que vai pro público"
+          }
           acao="MODERAR"
           destino="/admin/cartas"
+          destacado={Boolean(cartasPendentes)}
         />
         <CartaoAlerta
           numero={publicados.length}
@@ -56,14 +82,6 @@ export default function Painel() {
           descricao={`${conteudos.length} conteúdo(s) no total`}
           acao="VER CONTEÚDOS"
           destino="/admin/conteudos"
-        />
-        <CartaoAlerta
-          numero={1}
-          titulo="falha no fechamento"
-          descricao="Assinante #0388, ontem às 7h02"
-          acao="INVESTIGAR"
-          destino="/admin/assinantes"
-          destacado
         />
       </div>
 

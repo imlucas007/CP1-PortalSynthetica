@@ -104,3 +104,19 @@
   opacity: 0.5;
   cursor: default;
 }
+
+@media (max-width: 640px) {
+  .pagina {
+    padding: 24px 16px 48px;
+  }
+  .cupom > div {
+    padding: 28px 22px;
+  }
+  .titulo {
+    font-size: clamp(24px, 6.5vw, 34px);
+  }
+  .rodape {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

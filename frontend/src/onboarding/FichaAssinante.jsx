@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
-import { apagarSinalAssinante, obterAssinanteAtual } from "../api/client";
+import {
+  apagarSinalAssinante,
+  atualizarPreferenciasAssinante,
+  obterAssinanteAtual,
+} from "../api/client";
 import { lerToken, limparToken } from "./sessao";
 import styles from "./FichaAssinante.module.css";
 
+// Estes não vêm do banco — são ilustrações do TIPO de sinal que o
+// editor-chefe usaria. Ficam marcados como "exemplo" pra não passar por
+// dado real (apagar aqui só some da tela, não muda edição nenhuma).
 const SINAIS_ESTATICOS = [
   {
     id: "leu",
@@ -64,12 +71,28 @@ export default function FichaAssinante() {
     }
   }
 
+  async function removerTema(tema) {
+    const restantes = (assinante.temas ? assinante.temas.split(",").filter(Boolean) : []).filter(
+      (t) => t !== tema
+    );
+    try {
+      const atualizado = await atualizarPreferenciasAssinante(token, { temas: restantes });
+      setAssinante(atualizado);
+    } catch (e) {
+      setErro(e.message);
+    }
+  }
+
   function apagarEstatico(id) {
     setSinaisEstaticosApagados((atual) => new Set(atual).add(id));
   }
 
   if (carregando || !assinante) {
-    return <div className={styles.pagina} />;
+    return (
+      <div className={styles.pagina}>
+        <p className={`mono ${styles.carregandoTela}`}>Carregando sua ficha…</p>
+      </div>
+    );
   }
 
   const temas = assinante.temas ? assinante.temas.split(",").filter(Boolean) : [];
@@ -118,12 +141,35 @@ export default function FichaAssinante() {
               />
             )}
             {temas.length > 0 && (
-              <Sinal
-                grupo="FICHA"
-                texto={`Temas: ${temas.join(", ").toLowerCase()}`}
-                nota={`usado em ${temas.length} escolha(s)`}
-                onApagar={() => apagarSinal("temas")}
-              />
+              <div className={`${glass.vidro} ${styles.sinal}`}>
+                <div className={glass.vidroConteudo}>
+                  <p className={`mono ${styles.sinalGrupo}`}>FICHA</p>
+                  <div className={styles.sinalTexto}>
+                    <p>Temas</p>
+                    <div className={styles.temasChips}>
+                      {temas.map((tema) => (
+                        <button
+                          key={tema}
+                          className={`mono ${styles.temaChip}`}
+                          onClick={() => removerTema(tema)}
+                          title="Remover este tema"
+                        >
+                          {tema.toLowerCase()} ✕
+                        </button>
+                      ))}
+                    </div>
+                    <p className={`mono ${styles.sinalNota}`}>
+                      usado em {temas.length} escolha(s) · clique para remover um
+                    </p>
+                  </div>
+                  <button
+                    className={`mono ${styles.sinalApagar}`}
+                    onClick={() => apagarSinal("temas")}
+                  >
+                    APAGAR TODOS
+                  </button>
+                </div>
+              </div>
             )}
             {SINAIS_ESTATICOS.filter((s) => !sinaisEstaticosApagados.has(s.id)).map((s) => (
               <Sinal
@@ -131,6 +177,7 @@ export default function FichaAssinante() {
                 grupo={s.grupo}
                 texto={s.texto}
                 nota={s.nota}
+                exemplo
                 onApagar={() => apagarEstatico(s.id)}
               />
             ))}
@@ -163,7 +210,7 @@ export default function FichaAssinante() {
           Nenhum destes sinais sai do Synthetica. A edição é montada aqui, com o acervo daqui.
         </p>
 
-        <button className={`mono ${styles.irParaEdicao}`} onClick={() => navigate("/home")}>
+        <button className={`mono ${styles.irParaEdicao}`} onClick={() => navigate("/capa")}>
           IR PARA MINHA EDIÇÃO →
         </button>
       </div>
@@ -171,11 +218,14 @@ export default function FichaAssinante() {
   );
 }
 
-function Sinal({ grupo, texto, nota, onApagar }) {
+function Sinal({ grupo, texto, nota, onApagar, exemplo = false }) {
   return (
     <div className={`${glass.vidro} ${styles.sinal}`}>
       <div className={glass.vidroConteudo}>
-        <p className={`mono ${styles.sinalGrupo}`}>{grupo}</p>
+        <p className={`mono ${styles.sinalGrupo}`}>
+          {grupo}
+          {exemplo && <span className={styles.sinalExemplo}> · exemplo</span>}
+        </p>
         <div className={styles.sinalTexto}>
           <p>{texto}</p>
           <p className={`mono ${styles.sinalNota}`}>{nota}</p>

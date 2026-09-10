@@ -93,6 +93,18 @@
   font-size: 13px;
 }
 
+.mensagemOk {
+  color: #1f7a4d;
+  font-size: 13px;
+}
+
+.separadorFiltro {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(11, 11, 14, 0.14);
+  margin: 4px 2px;
+}
+
 .barraSelecao {
   display: flex;
   align-items: center;
@@ -288,4 +300,30 @@
   background: linear-gradient(157deg, #121217 8%, #3d4254 85%) !important;
   color: white !important;
   border: none !important;
+}
+
+/* Admin é ferramenta de desktop, mas abaixo de ~800px a tabela de colunas
+   fixas estourava a viewport. Aqui as linhas quebram e as colunas menos
+   críticas (ID, data) ssomem. */
+@media (max-width: 800px) {
+  .pagina {
+    padding: 20px 16px;
+  }
+  .linhaCabecalho {
+    display: none;
+  }
+  .linha {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  .colId,
+  .colAtualizado {
+    display: none;
+  }
+  .colTitulo {
+    flex-basis: 100%;
+  }
+  .filtros {
+    flex-wrap: wrap;
+  }
 }

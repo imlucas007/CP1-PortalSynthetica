@@ -162,3 +162,16 @@
   font-size: 10px;
   letter-spacing: 0.4px;
 }
+
+@media (max-width: 720px) {
+  .pagina {
+    padding: 40px 16px;
+  }
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+  .acoes {
+    flex-wrap: wrap;
+  }
+}

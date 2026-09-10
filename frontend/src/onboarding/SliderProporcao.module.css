@@ -4,6 +4,14 @@
   gap: 8px;
 }
 
+.rotulos {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
 .trilho {
   position: relative;
   display: flex;
@@ -12,6 +20,7 @@
   overflow: hidden;
   cursor: grab;
   user-select: none;
+  touch-action: none;
   margin-top: 12px;
 }
 
@@ -19,14 +28,23 @@
   cursor: grabbing;
 }
 
+.trilho:focus-visible {
+  outline: 2px solid var(--admin-texto);
+  outline-offset: 3px;
+}
+
 .segmentoEsquerda,
 .segmentoDireita {
-  background: #6b7387;
   height: 100%;
 }
 
 .segmentoEsquerda {
+  background: #1a1a21;
   border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.segmentoDireita {
+  background: #6b7387;
 }
 
 .divisoria {

@@ -1,4 +1,11 @@
+import { lerTokenAdmin } from "../admin/sessaoAdmin";
+
 const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+// O CRUD de conteúdo e a moderação de carta exigem token de editor no
+// backend. As telas da redação vivem dentro do AdminShell (que já validou o
+// token); aqui só reanexamos esse token nas escritas do admin.
+const tokenAdmin = lerTokenAdmin;
 
 async function requisicao(caminho, opcoes = {}) {
   const { token, ...resto } = opcoes;
@@ -11,8 +18,23 @@ async function requisicao(caminho, opcoes = {}) {
   });
 
   if (!resposta.ok) {
+    // Sessão de editor expirou no meio de uma ação (logou em outro lugar,
+    // token rotacionou): limpa e volta pro login em vez de deixar o admin
+    // preso numa tela sem conseguir salvar nada.
+    if (resposta.status === 401 && token && token === tokenAdmin()) {
+      try {
+        localStorage.removeItem("synthetica.admin.token");
+      } catch {
+        /* segue */
+      }
+      if (!window.location.pathname.startsWith("/admin/login")) {
+        window.location.assign("/admin/login");
+      }
+    }
     const corpo = await resposta.json().catch(() => ({}));
-    throw new Error(corpo.detail || `Erro ${resposta.status} em ${caminho}`);
+    const erro = new Error(corpo.detail || `Erro ${resposta.status} em ${caminho}`);
+    erro.status = resposta.status;
+    throw erro;
   }
 
   if (resposta.status === 204) return null;
@@ -35,6 +57,7 @@ export function obterConteudo(id) {
 export function criarConteudo(dados) {
   return requisicao("/conteudos", {
     method: "POST",
+    token: tokenAdmin(),
     body: JSON.stringify(dados),
   });
 }
@@ -42,12 +65,13 @@ export function criarConteudo(dados) {
 export function atualizarConteudo(id, dados) {
   return requisicao(`/conteudos/${id}`, {
     method: "PATCH",
+    token: tokenAdmin(),
     body: JSON.stringify(dados),
   });
 }
 
 export function excluirConteudo(id) {
-  return requisicao(`/conteudos/${id}`, { method: "DELETE" });
+  return requisicao(`/conteudos/${id}`, { method: "DELETE", token: tokenAdmin() });
 }
 
 export function listarEditorias() {
@@ -65,14 +89,15 @@ export function listarCartas({ status, busca } = {}) {
 export function atualizarCarta(id, dados) {
   return requisicao(`/cartas/${id}`, {
     method: "PATCH",
+    token: tokenAdmin(),
     body: JSON.stringify(dados),
   });
 }
 
-export function cadastrar({ email, senha, preferencias }) {
+export function cadastrar({ nome, email, senha, preferencias }) {
   return requisicao("/auth/cadastro", {
     method: "POST",
-    body: JSON.stringify({ email, senha, preferencias }),
+    body: JSON.stringify({ nome, email, senha, preferencias }),
   });
 }
 

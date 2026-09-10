@@ -1,0 +1,109 @@
+### Portal Synthetica - API FastAPI + Oracle
+### Requer a extensao "REST Client" no VS Code.
+### Clique em "Send Request" acima de cada bloco.
+### Rode primeiro o synthetica-completo.sql (DDL + DML) no SQL Developer.
+
+@host = http://127.0.0.1:8010
+
+### Saudacao
+GET {{host}}/
+
+### Health - confirma que o Oracle responde
+GET {{host}}/health
+
+
+### -------------------- MATERIAS --------------------
+
+### Consulta 5.1 - todos os conteudos com categoria e autor
+GET {{host}}/materias
+
+### Consulta 5.2 - conteudos mais comentados (materia sem comentario vem com 0)
+GET {{host}}/materias/mais-comentadas
+
+
+### -------------------- COMENTARIOS --------------------
+
+### POST - criar comentario na materia 1
+POST {{host}}/materias/1/comentarios
+Content-Type: application/json
+
+{
+  "id_usuario": 3,
+  "texto": "Comentario de teste criado pela API."
+}
+
+### PUT - editar comentario (X-Usuario-Id tem que ser o autor)
+PUT {{host}}/comentarios/1
+Content-Type: application/json
+X-Usuario-Id: 1
+
+{
+  "texto": "Texto do comentario 1 editado pela API."
+}
+
+### ERRO esperado 404 - editar comentario que nao e seu
+PUT {{host}}/comentarios/1
+Content-Type: application/json
+X-Usuario-Id: 999
+
+{
+  "texto": "nao deveria funcionar"
+}
+
+### DELETE - apagar comentario (restrito ao autor)
+DELETE {{host}}/comentarios/9
+X-Usuario-Id: 4
+
+
+### -------------------- FAVORITOS --------------------
+
+### Consulta 5.3 - favoritos do usuario 1
+GET {{host}}/usuarios/1/favoritos
+
+### POST - criar favorito
+POST {{host}}/favoritos
+Content-Type: application/json
+
+{
+  "id_usuario": 3,
+  "id_materia": 5
+}
+
+### ERRO esperado 409 - favoritar de novo o mesmo par (PK duplicada)
+POST {{host}}/favoritos
+Content-Type: application/json
+
+{
+  "id_usuario": 3,
+  "id_materia": 5
+}
+
+### DELETE - remover favorito
+DELETE {{host}}/favoritos/3/5
+
+
+### -------------------- USUARIOS --------------------
+
+### Consulta 5.4 - usuarios mais ativos (top 10)
+GET {{host}}/usuarios/mais-ativos
+
+
+### -------------------- AVALIACOES --------------------
+
+### PUT - moderar avaliacao (status + moderada_por juntos)
+PUT {{host}}/avaliacoes/1/moderar
+Content-Type: application/json
+
+{
+  "status": "APROVADA",
+  "moderada_por": 5
+}
+
+### ERRO esperado 400 - status invalido
+PUT {{host}}/avaliacoes/1/moderar
+Content-Type: application/json
+
+{
+  "status": "TALVEZ",
+  "moderada_por": 5
+}

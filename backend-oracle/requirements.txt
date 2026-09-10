@@ -1,0 +1,10 @@
+# Mesmas versoes do repositorio de aula (vvsantos/aula_fastapi): todas com
+# "wheel" pronta para Python 3.10 a 3.14 (Windows/macOS/Linux) e nenhuma
+# precisa de compilador na maquina. oracledb roda em modo THIN (Python puro,
+# sem Oracle Instant Client).
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+oracledb==3.4.2
+python-dotenv==1.2.3
+pydantic==2.13.4
+httpx==0.28.1

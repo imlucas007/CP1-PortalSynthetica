@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
+import { obterAssinanteAtual } from "../api/client";
+import { lerToken } from "./sessao";
 import luzHalo from "../assets/confirmacao/luz-halo.svg";
 import check from "../assets/confirmacao/check.png";
 import styles from "./AssinaturaConfirmada.module.css";
@@ -8,6 +11,15 @@ export default function AssinaturaConfirmada() {
   const navigate = useNavigate();
   const hoje = new Date();
   const em7dias = new Date(hoje.getTime() + 7 * 86400000).toLocaleDateString("pt-BR");
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    const token = lerToken();
+    if (!token) return;
+    obterAssinanteAtual(token)
+      .then((a) => setEmail(a.email))
+      .catch(() => {});
+  }, []);
 
   return (
     <div className={styles.pagina}>
@@ -34,7 +46,7 @@ export default function AssinaturaConfirmada() {
             <Linha rotulo="Plano" valor="Anual · R$ 179,00" />
             <Linha rotulo="Teste grátis até" valor={em7dias} />
             <Linha rotulo="Primeira cobrança" valor={`R$ 179,00 em ${em7dias}`} />
-            <Linha rotulo="Recibo enviado para" valor="você@e-mail.com" />
+            <Linha rotulo="Recibo enviado para" valor={email || "seu e-mail"} />
           </div>
 
           <button className={`mono ${styles.botaoPrimario}`} onClick={() => navigate("/assinatura")}>

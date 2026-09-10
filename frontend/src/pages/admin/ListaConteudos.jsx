@@ -6,6 +6,11 @@ import glass from "../../styles/glass.module.css";
 import styles from "./ListaConteudos.module.css";
 
 const EDITORIAS_FILTRO = ["TODAS", "AVANÇOS", "CULTURA", "ÉTICA", "MEMÓRIA"];
+const STATUS_FILTRO = [
+  { valor: "TODOS", rotulo: "TODOS", api: undefined },
+  { valor: "RASCUNHO", rotulo: "RASCUNHOS", api: "rascunho" },
+  { valor: "PUBLICADO", rotulo: "PUBLICADOS", api: "publicado" },
+];
 const POR_PAGINA = 25;
 
 function formatarData(iso) {
@@ -22,17 +27,24 @@ export default function ListaConteudos() {
   const [erro, setErro] = useState(null);
   const [busca, setBusca] = useState("");
   const [editoriaAtiva, setEditoriaAtiva] = useState("TODAS");
+  const [statusAtivo, setStatusAtivo] = useState("TODOS");
   const [pagina, setPagina] = useState(1);
   const [selecionados, setSelecionados] = useState(new Set());
   const [paraExcluir, setParaExcluir] = useState(null);
   const [processandoAcaoEmMassa, setProcessandoAcaoEmMassa] = useState(false);
+  const [aviso, setAviso] = useState(null);
 
   async function carregar() {
     setCarregando(true);
     setErro(null);
     try {
       const filtroEditoria = editoriaAtiva === "TODAS" ? undefined : editoriaAtiva;
-      const dados = await listarConteudos({ busca: busca || undefined, editoria: filtroEditoria });
+      const filtroStatus = STATUS_FILTRO.find((s) => s.valor === statusAtivo)?.api;
+      const dados = await listarConteudos({
+        busca: busca || undefined,
+        editoria: filtroEditoria,
+        status: filtroStatus,
+      });
       setConteudos(dados);
       setSelecionados(new Set());
     } catch (e) {
@@ -46,11 +58,11 @@ export default function ListaConteudos() {
     const debounce = setTimeout(carregar, 250);
     return () => clearTimeout(debounce);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [busca, editoriaAtiva]);
+  }, [busca, editoriaAtiva, statusAtivo]);
 
   useEffect(() => {
     setPagina(1);
-  }, [busca, editoriaAtiva]);
+  }, [busca, editoriaAtiva, statusAtivo]);
 
   const totalRascunhos = useMemo(
     () => conteudos.filter((c) => c.status === "rascunho").length,
@@ -73,8 +85,10 @@ export default function ListaConteudos() {
     try {
       await excluirConteudo(id);
       setParaExcluir(null);
+      setAviso("Conteúdo excluído.");
       carregar();
     } catch (e) {
+      setParaExcluir(null);
       setErro(e.message);
     }
   }
@@ -84,23 +98,32 @@ export default function ListaConteudos() {
     if (ids.length === 0) return;
     setProcessandoAcaoEmMassa(true);
     setErro(null);
-    try {
-      if (acao === "publicar") {
-        await Promise.all(ids.map((id) => atualizarConteudo(id, { status: "publicado" })));
-      } else if (acao === "rascunho") {
-        await Promise.all(ids.map((id) => atualizarConteudo(id, { status: "rascunho" })));
-      } else if (acao === "atribuir_autor") {
-        // MVP: único autor cadastrado hoje é a conta "Redação" (id 1).
-        await Promise.all(ids.map((id) => atualizarConteudo(id, { autor_id: 1 })));
-      } else if (acao === "excluir") {
-        await Promise.all(ids.map((id) => excluirConteudo(id)));
-      }
-      carregar();
-    } catch (e) {
-      setErro(e.message);
-    } finally {
-      setProcessandoAcaoEmMassa(false);
+    setAviso(null);
+
+    const chamada = (id) => {
+      if (acao === "publicar") return atualizarConteudo(id, { status: "publicado" });
+      if (acao === "rascunho") return atualizarConteudo(id, { status: "rascunho" });
+      if (acao === "excluir") return excluirConteudo(id);
+      return Promise.reject(new Error("Ação desconhecida"));
+    };
+
+    // allSettled: se um id falhar (ex.: outro editor já apagou), as outras
+    // ações não são desfeitas — a lista sempre recarrega e o admin vê
+    // quantas passaram e quantas falharam.
+    const resultados = await Promise.allSettled(ids.map(chamada));
+    const ok = resultados.filter((r) => r.status === "fulfilled").length;
+    const falhas = resultados.length - ok;
+
+    if (falhas === 0) {
+      setAviso(`${ok} conteúdo(s) atualizado(s).`);
+    } else {
+      setErro(
+        `${ok} de ${resultados.length} aplicada(s). ${falhas} falhou/falharam ` +
+          `(pode ter sido alterada por outra pessoa) — a lista foi recarregada.`
+      );
     }
+    setProcessandoAcaoEmMassa(false);
+    carregar();
   }
 
   return (
@@ -134,6 +157,16 @@ export default function ListaConteudos() {
             {editoria}
           </button>
         ))}
+        <span className={styles.separadorFiltro} aria-hidden="true" />
+        {STATUS_FILTRO.map((s) => (
+          <button
+            key={s.valor}
+            className={`mono ${styles.chip} ${statusAtivo === s.valor ? styles.chipAtivo : ""}`}
+            onClick={() => setStatusAtivo(s.valor)}
+          >
+            {s.rotulo}
+          </button>
+        ))}
       </div>
 
       <div className={`mono ${styles.linhaResultado}`}>
@@ -141,11 +174,13 @@ export default function ListaConteudos() {
           {conteudos.length} CONTEÚDOS · MOSTRANDO{" "}
           {conteudos.length === 0 ? 0 : (pagina - 1) * POR_PAGINA + 1}–
           {Math.min(pagina * POR_PAGINA, conteudos.length)} · FILTRO: {editoriaAtiva}
+          {statusAtivo !== "TODOS" ? ` · ${statusAtivo}` : ""}
         </p>
         <p className={styles.ordenar}>ORDENAR: MAIS RECENTES ▾</p>
       </div>
 
       {erro && <p className={styles.mensagemErro}>{erro}</p>}
+      {aviso && <p className={styles.mensagemOk}>{aviso}</p>}
 
       {selecionados.size > 0 && (
         <div className={`mono ${styles.barraSelecao}`}>
@@ -156,9 +191,6 @@ export default function ListaConteudos() {
             </button>
             <button disabled={processandoAcaoEmMassa} onClick={() => executarAcaoEmMassa("rascunho")}>
               MUDAR PARA RASCUNHO
-            </button>
-            <button disabled={processandoAcaoEmMassa} onClick={() => executarAcaoEmMassa("atribuir_autor")}>
-              ATRIBUIR AUTOR
             </button>
             <button
               className={styles.acaoExcluirMassa}

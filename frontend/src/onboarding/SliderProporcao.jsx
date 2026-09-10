@@ -1,53 +1,80 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import styles from "./SliderProporcao.module.css";
+
+const MIN = 4;
+const MAX = 96;
+
+function limitar(v) {
+  return Math.min(MAX, Math.max(MIN, Math.round(v)));
+}
 
 export default function SliderProporcao({ valor, onChange }) {
   const trilhoRef = useRef(null);
-  const [arrastando, setArrastando] = useState(false);
+  const arrastandoRef = useRef(false);
 
-  const calcularValor = useCallback((clientX) => {
+  const valorPorPosicao = useCallback((clientX) => {
     const trilho = trilhoRef.current;
     if (!trilho) return null;
     const { left, width } = trilho.getBoundingClientRect();
-    const fracao = (clientX - left) / width;
-    return Math.min(96, Math.max(4, Math.round(fracao * 100)));
+    return limitar(((clientX - left) / width) * 100);
   }, []);
 
-  function iniciarArraste(e) {
-    setArrastando(true);
-    mover(e);
+  function aoPressionar(e) {
+    arrastandoRef.current = true;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const novo = valorPorPosicao(e.clientX);
+    if (novo !== null) onChange(novo);
   }
 
-  function mover(e) {
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const novoValor = calcularValor(clientX);
-    if (novoValor !== null) onChange(novoValor);
+  function aoMover(e) {
+    if (!arrastandoRef.current) return;
+    const novo = valorPorPosicao(e.clientX);
+    if (novo !== null) onChange(novo);
   }
 
-  function pararArraste() {
-    setArrastando(false);
+  function aoSoltar() {
+    arrastandoRef.current = false;
+  }
+
+  function aoTeclar(e) {
+    const passo = e.shiftKey ? 10 : 1;
+    let novo = valor;
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") novo = valor - passo;
+    else if (e.key === "ArrowRight" || e.key === "ArrowUp") novo = valor + passo;
+    else if (e.key === "PageDown") novo = valor - 10;
+    else if (e.key === "PageUp") novo = valor + 10;
+    else if (e.key === "Home") novo = MIN;
+    else if (e.key === "End") novo = MAX;
+    else return;
+    e.preventDefault();
+    onChange(limitar(novo));
   }
 
   return (
     <div className={styles.controle}>
-      <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: 13 }}>
+      <div className={`mono ${styles.rotulos}`}>
         <span>AVANÇOS TECNOLÓGICOS</span>
         <span>IA NA ARTE E CULTURA</span>
       </div>
       <div
         ref={trilhoRef}
         className={styles.trilho}
-        onMouseDown={iniciarArraste}
-        onMouseMove={(e) => arrastando && mover(e)}
-        onMouseUp={pararArraste}
-        onMouseLeave={pararArraste}
-        onTouchStart={iniciarArraste}
-        onTouchMove={mover}
-        onTouchEnd={pararArraste}
+        role="slider"
+        tabIndex={0}
+        aria-label="Proporção entre avanços tecnológicos e cultura"
+        aria-valuemin={MIN}
+        aria-valuemax={MAX}
+        aria-valuenow={valor}
+        aria-valuetext={`${valor}% avanços tecnológicos, ${100 - valor}% cultura`}
+        onPointerDown={aoPressionar}
+        onPointerMove={aoMover}
+        onPointerUp={aoSoltar}
+        onPointerCancel={aoSoltar}
+        onKeyDown={aoTeclar}
       >
         <div className={styles.segmentoEsquerda} style={{ width: `${valor}%` }} />
         <div className={styles.segmentoDireita} style={{ width: `${100 - valor}%` }} />
-        <div className={`mono ${styles.divisoria}`} style={{ left: `${valor}%` }}>
+        <div className={`mono ${styles.divisoria}`} style={{ left: `${valor}%` }} aria-hidden="true">
           ||
         </div>
       </div>

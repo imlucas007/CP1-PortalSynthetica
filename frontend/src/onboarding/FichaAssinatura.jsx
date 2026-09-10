@@ -43,7 +43,7 @@ export default function FichaAssinatura() {
   const opcaoTempoAtual = OPCOES_TEMPO.find((o) => o.valor === respostas.tempo) ?? OPCOES_TEMPO[1];
 
   if (passo === 5) {
-    return <TelaFechamento respostas={respostas} opcaoTempo={opcaoTempoAtual} />;
+    return <TelaFechamento opcaoTempo={opcaoTempoAtual} />;
   }
 
   if (passo === 1) {
@@ -154,7 +154,7 @@ export default function FichaAssinatura() {
   );
 }
 
-function TelaFechamento({ respostas, opcaoTempo }) {
+function TelaFechamento({ opcaoTempo }) {
   const navigate = useNavigate();
 
   const materias = [

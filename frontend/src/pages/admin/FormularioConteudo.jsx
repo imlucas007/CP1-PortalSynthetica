@@ -59,12 +59,25 @@ export default function FormularioConteudo() {
     setForm((atual) => ({ ...atual, [campo]: valor }));
   }
 
+  const tituloValido = form.titulo.trim().length > 0;
+  const editoriaValida = Boolean(form.editoria_id);
+  const podeSalvar = tituloValido && editoriaValida && !salvando;
+
   async function salvar() {
+    if (!tituloValido) {
+      setErro("O título é obrigatório.");
+      return;
+    }
+    if (!editoriaValida) {
+      setErro("Escolha uma editoria.");
+      return;
+    }
     setSalvando(true);
     setErro(null);
     try {
       const payload = {
         ...form,
+        titulo: form.titulo.trim(),
         editoria_id: Number(form.editoria_id),
         pagina: form.pagina === "" ? null : Number(form.pagina),
         tempo_leitura_min: Number(form.tempo_leitura_min),
@@ -113,7 +126,7 @@ export default function FormularioConteudo() {
           <button className={`mono ${styles.cancelar}`} onClick={() => navigate("/admin/conteudos")}>
             CANCELAR
           </button>
-          <button className={`mono ${styles.salvar}`} onClick={salvar} disabled={salvando}>
+          <button className={`mono ${styles.salvar}`} onClick={salvar} disabled={!podeSalvar}>
             {salvando ? "SALVANDO…" : ehEdicao ? "SALVAR ALTERAÇÕES" : "CRIAR CONTEÚDO"}
           </button>
         </div>
@@ -205,10 +218,12 @@ export default function FormularioConteudo() {
 }
 
 function Campo({ label, children }) {
+  // <label> envolvendo o controle: associação implícita, o input passa a ter
+  // nome acessível sem precisar de id/htmlFor.
   return (
-    <div>
-      <p className={`mono ${styles.rotulo}`}>{label}</p>
+    <label className={styles.campoLabel}>
+      <span className={`mono ${styles.rotulo}`}>{label}</span>
       <div className={styles.caixaCampo}>{children}</div>
-    </div>
+    </label>
   );
 }

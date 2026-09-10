@@ -21,7 +21,7 @@
   position: sticky;
   top: 32px;
   z-index: 10;
-  margin: 32px 60px;
+  margin: 32px clamp(16px, 5vw, 60px);
   border-radius: 999px;
 }
 
@@ -30,6 +30,7 @@
   align-items: center;
   gap: 16px;
   padding: 12px 20px 12px 26px;
+  flex-wrap: wrap;
 }
 
 .voltar {
@@ -64,6 +65,11 @@
   white-space: nowrap;
 }
 
+.ferramenta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .paginas {
   background: linear-gradient(172deg, #121217 8%, #3d4254 85%);
   color: white;
@@ -76,9 +82,138 @@
 
 .spread {
   position: relative;
-  margin: 8px 172px 0;
+  margin: 8px clamp(16px, 12vw, 172px) 0;
   border-radius: 22px;
   box-shadow: 0px 26px 56px 0px rgba(66, 71, 92, 0.26);
+  will-change: transform;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.spread:active {
+  cursor: grabbing;
+}
+
+/* volta elástica quando o arraste não chega no limite */
+.spreadSolto {
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* saída: a matéria atual sai pro lado ao virar a página */
+.saiParaEsquerda {
+  transform: translateX(-6%);
+  opacity: 0;
+  transition: transform 0.24s ease-in, opacity 0.24s ease-in;
+}
+
+.saiParaDireita {
+  transform: translateX(6%);
+  opacity: 0;
+  transition: transform 0.24s ease-in, opacity 0.24s ease-in;
+}
+
+/* entrada: a nova matéria entra pelo lado oposto */
+.entraDaDireita {
+  animation: entraDireita 0.3s ease-out;
+}
+
+.entraDaEsquerda {
+  animation: entraEsquerda 0.3s ease-out;
+}
+
+@keyframes entraDireita {
+  from {
+    transform: translateX(7%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes entraEsquerda {
+  from {
+    transform: translateX(-7%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.spreadCarregando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+  cursor: default;
+}
+
+.spreadCarregando > div {
+  padding: 48px;
+  text-align: center;
+}
+
+.aviso {
+  margin: 8px clamp(16px, 12vw, 172px) 0;
+  border-radius: 22px;
+}
+
+.aviso > div {
+  padding: 56px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.avisoTexto {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  color: var(--admin-apoio);
+}
+
+@media (max-width: 900px) {
+  .espiada {
+    display: none;
+  }
+  .spreadConteudo {
+    flex-direction: column;
+  }
+  .vinco {
+    width: auto;
+    height: 1px;
+  }
+  .pagEsquerda,
+  .pagDireita {
+    padding: clamp(28px, 6vw, 52px) clamp(20px, 5vw, 44px);
+  }
+  .titulo {
+    font-size: clamp(28px, 8vw, 40px);
+  }
+  .lead {
+    font-size: 17px;
+  }
+  .arraste {
+    margin: 28px auto 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spreadSolto,
+  .saiParaEsquerda,
+  .saiParaDireita {
+    transition: none;
+  }
+  .entraDaDireita,
+  .entraDaEsquerda {
+    animation: none;
+  }
+  .gradienteAnimado {
+    animation: none;
+  }
 }
 
 .espiada {
@@ -239,7 +374,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 24px 172px 0;
+  margin: 24px clamp(16px, 12vw, 172px) 0;
 }
 
 .progressoLabel {

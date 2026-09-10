@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .models import StatusCarta, StatusConteudo
 
@@ -27,12 +27,12 @@ class UsuarioOut(BaseModel):
 
 
 class ConteudoBase(BaseModel):
-    titulo: str
+    titulo: str = Field(min_length=1)
     chamada: str = ""
     corpo: str = ""
     editoria_id: int
-    pagina: Optional[int] = None
-    tempo_leitura_min: int = 5
+    pagina: Optional[int] = Field(default=None, ge=1)
+    tempo_leitura_min: int = Field(default=5, ge=1)
     palavra_chave: str = ""
     status: StatusConteudo = StatusConteudo.RASCUNHO
 
@@ -42,12 +42,13 @@ class ConteudoCreate(ConteudoBase):
 
 
 class ConteudoUpdate(BaseModel):
-    titulo: Optional[str] = None
+    titulo: Optional[str] = Field(default=None, min_length=1)
     chamada: Optional[str] = None
     corpo: Optional[str] = None
     editoria_id: Optional[int] = None
-    pagina: Optional[int] = None
-    tempo_leitura_min: Optional[int] = None
+    autor_id: Optional[int] = None
+    pagina: Optional[int] = Field(default=None, ge=1)
+    tempo_leitura_min: Optional[int] = Field(default=None, ge=1)
     palavra_chave: Optional[str] = None
     status: Optional[StatusConteudo] = None
 
@@ -88,6 +89,7 @@ class PreferenciasOnboarding(BaseModel):
 
 
 class CadastroIn(BaseModel):
+    nome: Optional[str] = None
     email: str
     senha: str
     preferencias: Optional[PreferenciasOnboarding] = None

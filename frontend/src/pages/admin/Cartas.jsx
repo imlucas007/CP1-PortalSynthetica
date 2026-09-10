@@ -25,6 +25,8 @@ export default function Cartas() {
   const [filtroAtivo, setFiltroAtivo] = useState("pendente");
   const [selecionadas, setSelecionadas] = useState(new Set());
   const [contagens, setContagens] = useState({ pendente: 0, aprovada: 0, recusada: 0 });
+  const [aviso, setAviso] = useState(null);
+  const [processando, setProcessando] = useState(false);
 
   async function carregar() {
     setCarregando(true);
@@ -64,13 +66,27 @@ export default function Cartas() {
   }
 
   async function definirStatus(ids, status) {
+    if (ids.length === 0 || processando) return;
     setErro(null);
-    try {
-      await Promise.all(ids.map((id) => atualizarCarta(id, { status })));
-      carregar();
-    } catch (e) {
-      setErro(e.message);
+    setAviso(null);
+    setProcessando(true);
+    const verbo = status === "aprovada" ? "aprovada(s)" : "recusada(s)";
+
+    const resultados = await Promise.allSettled(
+      ids.map((id) => atualizarCarta(id, { status }))
+    );
+    const ok = resultados.filter((r) => r.status === "fulfilled").length;
+    const falhas = resultados.length - ok;
+
+    if (falhas === 0) {
+      setAviso(`${ok} carta(s) ${verbo}.`);
+    } else {
+      setErro(
+        `${ok} de ${resultados.length} atualizada(s). ${falhas} falhou/falharam — a lista foi recarregada.`
+      );
     }
+    setProcessando(false);
+    carregar();
   }
 
   const subtitulo = useMemo(
@@ -104,13 +120,24 @@ export default function Cartas() {
       </div>
 
       {erro && <p className={styles.mensagemErro}>{erro}</p>}
+      {aviso && <p className={styles.mensagemOk}>{aviso}</p>}
 
       {selecionadas.size > 0 && (
         <div className={`mono ${styles.barraSelecao}`}>
           <p>{selecionadas.size} SELECIONADA(S)</p>
           <div className={styles.acoesEmMassa}>
-            <button onClick={() => definirStatus([...selecionadas], "aprovada")}>APROVAR</button>
-            <button onClick={() => definirStatus([...selecionadas], "recusada")}>RECUSAR</button>
+            <button
+              disabled={processando}
+              onClick={() => definirStatus([...selecionadas], "aprovada")}
+            >
+              APROVAR
+            </button>
+            <button
+              disabled={processando}
+              onClick={() => definirStatus([...selecionadas], "recusada")}
+            >
+              RECUSAR
+            </button>
             <button onClick={() => setSelecionadas(new Set())}>LIMPAR SELEÇÃO</button>
           </div>
         </div>
@@ -144,6 +171,7 @@ export default function Cartas() {
                 {carta.status !== "aprovada" && (
                   <button
                     className={`mono ${styles.acaoAprovar}`}
+                    disabled={processando}
                     onClick={() => definirStatus([carta.id], "aprovada")}
                   >
                     APROVAR
@@ -152,6 +180,7 @@ export default function Cartas() {
                 {carta.status !== "recusada" && (
                   <button
                     className={`mono ${styles.acaoRecusar}`}
+                    disabled={processando}
                     onClick={() => definirStatus([carta.id], "recusada")}
                   >
                     RECUSAR

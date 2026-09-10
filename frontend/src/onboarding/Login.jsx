@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import glass from "../styles/glass.module.css";
 import { entrar } from "../api/client";
 import { salvarToken } from "./sessao";
@@ -10,8 +10,18 @@ import gota2 from "../assets/login/gota-2.svg";
 import gota3 from "../assets/login/gota-3.svg";
 import styles from "./Login.module.css";
 
+// Quem chega no login vindo de outro passo do funil (ex.: Checkout achou que o
+// e-mail já tinha conta) precisa voltar pra onde estava, não cair sempre na
+// /home. Só aceitamos caminho interno pra não virar open-redirect.
+function destinoSeguro(bruto) {
+  if (bruto && bruto.startsWith("/") && !bruto.startsWith("//")) return bruto;
+  return "/home";
+}
+
 export default function Login() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const destino = destinoSeguro(params.get("next"));
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -24,7 +34,7 @@ export default function Login() {
     try {
       const sessao = await entrar({ email, senha });
       salvarToken(sessao.token);
-      navigate("/home");
+      navigate(destino);
     } catch (e2) {
       setErro(e2.message);
     } finally {
@@ -79,7 +89,9 @@ export default function Login() {
 
             <div className={styles.opcoes}>
               <span>Manter conectado</span>
-              <span className={styles.esqueci}>Esqueci minha senha</span>
+              <span className={styles.esqueci} title="Recuperação de senha em breve" aria-disabled="true">
+                Esqueci minha senha
+              </span>
             </div>
 
             {erro && <p className={styles.erro}>{erro}</p>}

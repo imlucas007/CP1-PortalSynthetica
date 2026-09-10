@@ -107,3 +107,13 @@
   letter-spacing: 0.4px;
   text-align: center;
 }
+
+@media (max-width: 680px) {
+  .pagina {
+    padding: 40px 16px;
+  }
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+}

@@ -1,27 +1,50 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
-import { listarConteudos } from "../api/client";
+import { obterAssinanteAtual } from "../api/client";
+import { listarMaterias } from "../api/revista";
 import { lerPreferencias } from "../onboarding/preferencias";
+import { lerToken } from "../onboarding/sessao";
 import styles from "./Sumario.module.css";
 
 export default function Sumario() {
   const navigate = useNavigate();
   const [conteudos, setConteudos] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  const preferencias = lerPreferencias();
+  const [erro, setErro] = useState(false);
+  const [proporcao, setProporcao] = useState(lerPreferencias().proporcaoAvancos ?? 62);
+  const [assinante, setAssinante] = useState(null);
 
   useEffect(() => {
-    listarConteudos({ status: "publicado" })
-      .then((itens) =>
-        setConteudos(
-          [...itens].sort((a, b) => (a.pagina ?? 999) - (b.pagina ?? 999))
-        )
-      )
-      .finally(() => setCarregando(false));
+    let ativo = true;
+    listarMaterias()
+      .then((itens) => {
+        if (ativo) {
+          setConteudos([...itens].sort((a, b) => (a.pagina ?? 999) - (b.pagina ?? 999)));
+        }
+      })
+      .catch(() => ativo && setErro(true))
+      .finally(() => ativo && setCarregando(false));
+    return () => {
+      ativo = false;
+    };
   }, []);
 
-  const proporcao = preferencias.proporcaoAvancos ?? 62;
+  useEffect(() => {
+    const token = lerToken();
+    if (!token) return;
+    let ativo = true;
+    obterAssinanteAtual(token)
+      .then((a) => {
+        if (!ativo) return;
+        setAssinante(a);
+        if (a.proporcao_avancos != null) setProporcao(a.proporcao_avancos);
+      })
+      .catch(() => {});
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   return (
     <div className={styles.pagina}>
@@ -29,7 +52,11 @@ export default function Sumario() {
         <button className={`mono ${styles.marca}`} onClick={() => navigate("/home")}>
           REVISTA SYNTHETICA
         </button>
-        <p className={`mono ${styles.usuaria}`}>ISA · ASSINANTE</p>
+        {assinante && (
+          <p className={`mono ${styles.usuaria}`}>
+            {assinante.nome.toUpperCase()} · ASSINANTE
+          </p>
+        )}
       </div>
 
       <div className={styles.cabecalho}>
@@ -49,7 +76,18 @@ export default function Sumario() {
 
       <div className={styles.lista}>
         {carregando && <p className={styles.mensagem}>Carregando…</p>}
-        {!carregando &&
+        {!carregando && erro && (
+          <div className={styles.mensagem} role="alert">
+            <p>Não foi possível carregar o sumário.</p>
+            <button
+              className={`mono ${styles.tentarNovamente}`}
+              onClick={() => window.location.reload()}
+            >
+              TENTAR DE NOVO
+            </button>
+          </div>
+        )}
+        {!carregando && !erro &&
           conteudos.map((c) => (
             <button
               key={c.id}
@@ -70,7 +108,7 @@ export default function Sumario() {
               </div>
             </button>
           ))}
-        {!carregando && conteudos.length === 0 && (
+        {!carregando && !erro && conteudos.length === 0 && (
           <p className={styles.mensagem}>Nenhuma matéria publicada ainda.</p>
         )}
       </div>

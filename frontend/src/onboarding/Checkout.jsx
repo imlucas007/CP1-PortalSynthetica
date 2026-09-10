@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
+import { cadastrar } from "../api/client";
+import { lerPreferencias } from "./preferencias";
+import { salvarToken } from "./sessao";
 import luzHalo from "../assets/checkout/luz-halo.svg";
 import gota1 from "../assets/checkout/gota-1.svg";
 import styles from "./Checkout.module.css";
@@ -9,13 +12,45 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [metodo, setMetodo] = useState("cartao");
   const [confirmando, setConfirmando] = useState(false);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState(null);
+  const [emailEmUso, setEmailEmUso] = useState(false);
 
-  function confirmar(e) {
+  async function confirmar(e) {
     e.preventDefault();
-    // Protótipo acadêmico: nenhum dado de pagamento é enviado a lugar nenhum.
-    // Isso só simula o passo seguinte do fluxo.
+    setErro(null);
     setConfirmando(true);
-    setTimeout(() => navigate("/assinatura-confirmada"), 500);
+    // Pagamento é mock (protótipo acadêmico — nenhum dado de cartão sai
+    // daqui). Mas a CONTA é criada de verdade: sem isso, "assinatura ativa"
+    // seria mentira e o usuário sairia do funil sem login nem ficha.
+    try {
+      const prefs = lerPreferencias();
+      const sessao = await cadastrar({
+        nome,
+        email,
+        senha,
+        preferencias: {
+          proporcao_avancos: prefs.proporcaoAvancos,
+          temas: prefs.temas,
+          perfil: prefs.perfil,
+          tempo: prefs.tempo,
+        },
+      });
+      salvarToken(sessao.token);
+      navigate("/assinatura-confirmada");
+    } catch (e2) {
+      // 409 = e-mail já cadastrado. Não é um beco sem saída: a pessoa já tem
+      // conta, então mostramos um caminho pro login (que volta pra /assinante).
+      if (e2.status === 409 || e2.message.includes("e-mail")) {
+        setEmailEmUso(true);
+        setErro(null);
+      } else {
+        setErro(e2.message);
+      }
+      setConfirmando(false);
+    }
   }
 
   return (
@@ -45,8 +80,47 @@ export default function Checkout() {
           <div className={`${glass.vidro} ${styles.painel}`}>
             <div className={glass.vidroConteudo}>
               <p className={`mono ${styles.painelTitulo}`}>SEUS DADOS</p>
-              <Campo rotulo="NOME COMPLETO" placeholder="Isabella Tragante" />
-              <Campo rotulo="E-MAIL" placeholder="seu@e-mail.com" type="email" />
+              <Campo
+                rotulo="NOME COMPLETO"
+                placeholder="Isabella Tragante"
+                value={nome}
+                onChange={setNome}
+              />
+              <Campo
+                rotulo="E-MAIL"
+                placeholder="seu@e-mail.com"
+                type="email"
+                required
+                value={email}
+                onChange={(v) => {
+                  setEmail(v);
+                  if (emailEmUso) setEmailEmUso(false);
+                }}
+              />
+              <Campo
+                rotulo="SENHA (mínimo 8)"
+                placeholder="••••••••••"
+                type="password"
+                required
+                minLength={8}
+                value={senha}
+                onChange={setSenha}
+              />
+              {erro && <p className={styles.erroCadastro}>{erro}</p>}
+              {emailEmUso && (
+                <p className={styles.erroCadastro}>
+                  Já existe uma conta com esse e-mail.{" "}
+                  <Link to="/login?next=/assinante" className={styles.linkEntrar}>
+                    Entrar para continuar →
+                  </Link>
+                </p>
+              )}
+              <p className={`mono ${styles.jaAssina}`}>
+                Já assina?{" "}
+                <Link to="/login?next=/assinante" className={styles.linkEntrar}>
+                  Entrar
+                </Link>
+              </p>
             </div>
           </div>
 
@@ -133,11 +207,16 @@ export default function Checkout() {
   );
 }
 
-function Campo({ rotulo, placeholder, type = "text" }) {
+function Campo({ rotulo, placeholder, type = "text", value, onChange, required, minLength }) {
+  // Campos de pagamento não têm onChange (mock, não geram cobrança) — ficam
+  // não-controlados; os campos de conta são controlados.
+  const props = onChange
+    ? { value: value ?? "", onChange: (e) => onChange(e.target.value) }
+    : {};
   return (
     <label className={styles.campo}>
       <span className="mono">{rotulo}</span>
-      <input type={type} placeholder={placeholder} />
+      <input type={type} placeholder={placeholder} required={required} minLength={minLength} {...props} />
     </label>
   );
 }

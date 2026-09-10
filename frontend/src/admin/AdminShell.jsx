@@ -5,13 +5,15 @@ import { obterAssinanteAtual } from "../api/client";
 import { lerTokenAdmin, limparTokenAdmin } from "./sessaoAdmin";
 import styles from "./AdminShell.module.css";
 
+// Só telas que existem de verdade viram link. Edições e Assinantes ainda não
+// têm rota — ficavam levando a uma tela em branco sem volta.
 const LINKS = [
   { to: "/admin/painel", rotulo: "PAINEL" },
   { to: "/admin/conteudos", rotulo: "CONTEÚDOS" },
-  { to: "/admin/edicoes", rotulo: "EDIÇÕES" },
   { to: "/admin/cartas", rotulo: "CARTAS" },
-  { to: "/admin/assinantes", rotulo: "ASSINANTES" },
 ];
+
+const LINKS_FUTUROS = ["EDIÇÕES", "ASSINANTES"];
 
 export default function AdminShell({ children }) {
   const navigate = useNavigate();
@@ -46,7 +48,21 @@ export default function AdminShell({ children }) {
   }
 
   if (verificando || !editor) {
-    return <div className={glass.fundoAdmin} />;
+    return (
+      <div className={glass.fundoAdmin}>
+        <p
+          className="mono"
+          style={{
+            padding: "48px 32px",
+            fontSize: 12,
+            letterSpacing: "1.4px",
+            color: "var(--admin-apoio)",
+          }}
+        >
+          Verificando acesso…
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -64,6 +80,16 @@ export default function AdminShell({ children }) {
                 >
                   {link.rotulo}
                 </NavLink>
+              ))}
+              {LINKS_FUTUROS.map((rotulo) => (
+                <span
+                  key={rotulo}
+                  className={styles.linkFuturo}
+                  title="Em breve"
+                  aria-disabled="true"
+                >
+                  {rotulo}
+                </span>
               ))}
             </nav>
             <div className={styles.usuario}>

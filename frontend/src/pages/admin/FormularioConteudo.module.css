@@ -95,7 +95,12 @@
   gap: 20px;
 }
 
+.campoLabel {
+  display: block;
+}
+
 .rotulo {
+  display: block;
   font-size: 9px;
   letter-spacing: 0.9px;
   color: var(--admin-apoio);
@@ -152,4 +157,23 @@
 .statusAtivo {
   background: linear-gradient(180deg, #1a1a21 0%, #52576b 100%);
   color: #f2efe9;
+}
+
+@media (max-width: 820px) {
+  .grade {
+    flex-direction: column;
+  }
+  .colunaLateral {
+    width: 100%;
+  }
+  .cabecalho {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .acoesTopo {
+    flex-wrap: wrap;
+  }
+  .titulo {
+    font-size: clamp(26px, 7vw, 42px);
+  }
 }

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
-import { listarConteudos } from "../api/client";
+import { listarMaterias } from "../api/revista";
 import objetoCromado from "../assets/login/objeto-cromado.png";
+import LiquidLens from "../components/LiquidLens/LiquidLens";
+import GlitchText from "../components/glitch/GlitchText";
+import GlitchWordmark from "../components/glitch/GlitchWordmark";
 import {
   EIXOS,
   EQUIPE,
@@ -23,7 +26,15 @@ export default function HomeComercial() {
   const [newsletterEnviada, setNewsletterEnviada] = useState(false);
 
   useEffect(() => {
-    listarConteudos({ status: "publicado" }).then((itens) => setDestaques(itens.slice(0, 3)));
+    // Mesma fonte que o leitor (Oracle): assim os ids dos cards "Nesta edição"
+    // batem com o que /leitura/:id abre.
+    let ativo = true;
+    listarMaterias()
+      .then((itens) => ativo && setDestaques(itens.slice(0, 3)))
+      .catch(() => ativo && setDestaques([]));
+    return () => {
+      ativo = false;
+    };
   }, []);
 
   function enviarNewsletter(e) {
@@ -37,10 +48,14 @@ export default function HomeComercial() {
     <div className={styles.pagina}>
       <div className={styles.halo} />
 
+      <LiquidLens />
+
       {/* NAV */}
       <div className={`${glass.vidro} ${glass.pilula} ${styles.nav}`}>
         <div className={glass.vidroConteudo}>
-          <p className={`mono ${styles.navMarca}`}>SYNTHETICA</p>
+          <GlitchText as="p" className={`mono ${styles.navMarca}`} aoPassarMouse automatico={false}>
+            SYNTHETICA
+          </GlitchText>
           <nav className={`mono ${styles.navLinks}`}>
             <a href="#nesta-edicao">PESQUISA</a>
             <Link to="/sumario">REPORTAGENS</Link>
@@ -58,15 +73,22 @@ export default function HomeComercial() {
       <section className={styles.hero}>
         <p className={`mono ${styles.heroMeta}`}>
           <span>REVISTA DE INTELIGÊNCIA ARTIFICIAL</span>
-          <span>EDIÇÃO #07</span>
+          <GlitchText intensidade={0.7} intervaloMinMs={13000} intervaloMaxMs={28000}>
+            EDIÇÃO #07
+          </GlitchText>
           <span>AGO 2047</span>
           <span>2.400+ ASSINANTES</span>
         </p>
 
+        <GlitchWordmark texto="SYNTHETICA" className={styles.wordmarkFaixa} />
+
         <div className={styles.heroGrade}>
           <div className={styles.heroTexto}>
             <h1 className={styles.h1}>
-              A revista de inteligência artificial
+              A revista de{" "}
+              <GlitchText intensidade={0.8} intervaloMinMs={15000} intervaloMaxMs={32000}>
+                inteligência artificial
+              </GlitchText>
               <br />
               escrita por humanos e
               <br />
@@ -82,7 +104,7 @@ export default function HomeComercial() {
               <button className={`mono ${styles.ctaPrimario}`} onClick={() => navigate("/checkout")}>
                 ASSINAR POR R$ 19/MÊS
               </button>
-              <button className={`mono ${styles.ctaSecundario}`} onClick={() => navigate("/leitura/1")}>
+              <button className={`mono ${styles.ctaSecundario}`} onClick={() => navigate("/capa")}>
                 VER EDIÇÃO DE EXEMPLO
               </button>
             </div>
@@ -92,10 +114,7 @@ export default function HomeComercial() {
             </p>
           </div>
 
-          <div className={styles.heroWordmarkArea}>
-            <p className={styles.wordmarkGigante} aria-hidden="true">
-              SYNTHETICA
-            </p>
+          <div className={styles.introColuna}>
             <div className={`${glass.vidro} ${styles.introCard}`}>
               <p className={`${glass.vidroConteudo} ${styles.introTexto}`}>
                 Cada leitor recebe uma edição diferente. A curadoria não é oculta: ao lado de cada
@@ -153,7 +172,7 @@ export default function HomeComercial() {
 
       {/* COMO FUNCIONA */}
       <section id="como-funciona" className={styles.secao}>
-        <h2 className={styles.h2}>Como funciona</h2>
+        <h2 className={styles.h2}>Feita por humanos, selecionada por inteligência artificial</h2>
         <div className={styles.passos}>
           {PASSOS.map((p) => (
             <div key={p.numero} className={styles.passo}>
@@ -167,7 +186,9 @@ export default function HomeComercial() {
 
       {/* NESTA EDIÇÃO */}
       <section id="nesta-edicao" className={styles.secao}>
-        <h2 className={styles.h2}>Nesta edição</h2>
+        <GlitchText as="h2" className={styles.h2} aoEntrarNaTela automatico={false}>
+          Nesta edição
+        </GlitchText>
         <p className={styles.secaoSublinha}>
           Três das quinze matérias publicadas em agosto. A sua edição terá seis, escolhidas para o
           seu perfil.
@@ -197,7 +218,7 @@ export default function HomeComercial() {
 
       {/* REDAÇÃO */}
       <section id="redacao" className={styles.secao}>
-        <h2 className={styles.h2}>Redação</h2>
+        <h2 className={styles.h2}>Quem escreve a sua edição</h2>
         <p className={styles.secaoSublinha}>
           Toda matéria é assinada por uma pessoa. Nenhum texto é gerado por máquina em nenhuma
           etapa.
@@ -212,11 +233,14 @@ export default function HomeComercial() {
             </div>
           ))}
         </div>
+        <a href="#faq" className={`mono ${styles.expedienteLink}`}>
+          Ver expediente completo →
+        </a>
       </section>
 
       {/* PLANOS */}
       <section id="planos" className={styles.secao}>
-        <h2 className={styles.h2}>Planos simples, sem letras miúdas</h2>
+        <h2 className={styles.h2}>Assinatura de revista digital, sem fidelidade</h2>
         <div className={styles.planos}>
           {PLANOS.map((plano) => (
             <div
