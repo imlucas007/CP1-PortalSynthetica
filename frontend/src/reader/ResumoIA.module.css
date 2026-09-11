@@ -1,0 +1,7 @@
+.painel { padding: 16px; border: 1px solid #d4cdef; border-radius: 16px; background: #f0edf8; cursor: auto; }
+.botao { padding: 10px 12px; border-radius: 10px; background: #302747; color: #fff; font-size: 11px; letter-spacing: 0.6px; }
+.botao:disabled { opacity: 0.65; cursor: wait; }
+.botao:focus-visible { outline: 3px solid #7560a8; outline-offset: 3px; }
+.painel h2 { margin: 18px 0 10px; font-size: 11px; letter-spacing: 1px; }
+.painel p { margin: 12px 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.painel small { display: block; font-size: 11px; line-height: 1.5; color: #595268; }

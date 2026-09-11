@@ -5,6 +5,8 @@ import { listarMaterias, obterMateria } from "../api/revista";
 import luzHalo from "../assets/leitor/luz-halo.svg";
 import marcador from "../assets/leitor/marcador.svg";
 import styles from "./Leitor.module.css";
+import ResumoIA from "./ResumoIA";
+import ImagemMateria from "./ImagemMateria";
 
 const REDUZIDO =
   typeof window !== "undefined" &&
@@ -202,6 +204,7 @@ export default function Leitor() {
               POR {conteudo.autor.nome.toUpperCase()} · {conteudo.tempo_leitura_min} MIN
             </p>
             <p className={styles.lead}>{conteudo.chamada}</p>
+            <ResumoIA key={id} id={id} />
             {primeiraMetade.map((p, i) => (
               <p key={i} className={styles.corpo}>
                 {p}
@@ -210,8 +213,10 @@ export default function Leitor() {
           </div>
           <div className={styles.vinco} />
           <div className={styles.pagDireita}>
-            <div className={styles.gradienteAnimado} />
-            <p className={`mono ${styles.figura}`}>Fig. 01 · Estudo de forma para esta matéria</p>
+            <div style={{ height: 220, overflow: "hidden", borderRadius: 22 }}>
+              <ImagemMateria conteudo={conteudo} fallback={<div className={styles.gradienteAnimado} />} />
+            </div>
+            <p className={`mono ${styles.figura}`}>{conteudo.imagem_url ? "Imagem ilustrativa da matéria" : "Fig. 01 · Estudo de forma para esta matéria"}</p>
             {segundaMetade.map((p, i) => (
               <p key={i} className={styles.corpo}>
                 {p}

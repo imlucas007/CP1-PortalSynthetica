@@ -12,8 +12,8 @@
 
 const BASE_ORACLE = import.meta.env.VITE_ORACLE_API_URL || "http://127.0.0.1:8010";
 
-async function buscar(caminho) {
-  const resposta = await fetch(`${BASE_ORACLE}${caminho}`);
+async function buscar(caminho, opcoes) {
+  const resposta = await fetch(`${BASE_ORACLE}${caminho}`, opcoes);
   if (!resposta.ok) {
     const corpo = await resposta.json().catch(() => ({}));
     const erro = new Error(corpo.detail || `Erro ${resposta.status} em ${caminho}`);
@@ -30,6 +30,7 @@ function paraConteudo(m) {
     titulo: m.titulo,
     chamada: m.resumo ?? "",
     corpo: m.corpo ?? "",
+    imagem_url: m.imagem_url || ([1, 2, 3, 4, 5].includes(m.id_materia) ? `/images/materias/${m.id_materia}.jpg` : ""),
     editoria: { nome: m.categoria ?? "" },
     autor: { nome: m.autor ?? "" },
     pagina: m.pagina ?? null,
@@ -46,4 +47,16 @@ export function listarMaterias() {
 
 export function obterMateria(id) {
   return buscar(`/materias/${id}`).then(paraConteudo);
+}
+
+export function resumirMateria(id, signal) {
+  return buscar(`/materias/${id}/resumo-ia`, { method: "POST", signal });
+}
+
+export async function gerarCuradoria(preferencias, signal) {
+  const resultado = await buscar("/curadoria", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(preferencias), signal,
+  });
+  return resultado.recomendacoes.map((r) => ({ ...paraConteudo(r.materia), motivo: r.motivo }));
 }

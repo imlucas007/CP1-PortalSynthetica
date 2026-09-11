@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import glass from "../styles/glass.module.css";
 import { listarMaterias } from "../api/revista";
 import objetoCromado from "../assets/login/objeto-cromado.png";
+import ImagemMateria from "../reader/ImagemMateria";
 import LiquidLens from "../components/LiquidLens/LiquidLens";
 import GlitchText from "../components/glitch/GlitchText";
 import GlitchWordmark from "../components/glitch/GlitchWordmark";
@@ -202,7 +203,7 @@ export default function HomeComercial() {
             >
               <div className={glass.vidroConteudo}>
                 <div className={styles.artigoFoto}>
-                  <span className="mono">FOTO</span>
+                  <ImagemMateria conteudo={c} fallback={<span className="mono">SEM IMAGEM</span>} />
                 </div>
                 <p className={`mono ${styles.artigoEditoria}`}>{c.editoria.nome.toUpperCase()}</p>
                 <p className={styles.artigoTitulo}>{c.titulo}</p>

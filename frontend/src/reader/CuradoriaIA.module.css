@@ -1,0 +1,17 @@
+.painel { margin: 0 clamp(20px, 8vw, 110px) 32px; padding: clamp(20px, 4vw, 36px); border: 1px solid #d4cdef; border-radius: 24px; background: #f0edf8; color: #302747; }
+.painel h2 { font-size: 24px; margin: 0 0 12px; }
+.painel p { line-height: 1.6; margin: 12px 0; }
+.painel fieldset { border: 0; padding: 0; margin: 20px 0 0; min-width: 0; }
+.painel legend { margin-bottom: 12px; font-weight: 600; }
+.temas { display: flex; flex-wrap: wrap; gap: 10px; }
+.temas label { display: flex; align-items: center; gap: 8px; padding: 10px; background: #fff; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.campo { display: block; margin: 20px 0 10px; }
+.painel input[type=range] { width: 100%; accent-color: #524172; }
+.painel select { padding: 10px; border: 1px solid #817293; border-radius: 8px; background: white; color: #302747; }
+.painel button { padding: 14px 18px; background: #302747; color: white; border-radius: 10px; }
+.painel button:disabled { opacity: .65; cursor: wait; }
+.painel :focus-visible { outline: 3px solid #7560a8; outline-offset: 3px; }
+.nota { font-size: 12px; color: #595268; }
+.lista { padding-left: 24px; }
+.lista li { padding: 14px 0; border-bottom: 1px solid #d4cdef; }
+.lista a { color: #302747; font-weight: 700; text-decoration: underline; }

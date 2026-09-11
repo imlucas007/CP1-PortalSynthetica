@@ -7,6 +7,7 @@ import { lerPreferencias } from "../onboarding/preferencias";
 import { lerToken } from "../onboarding/sessao";
 import logo from "../assets/home/logo.svg";
 import styles from "./Home.module.css";
+import ImagemMateria from "./ImagemMateria";
 
 const BARRAS = [6, 2, 4, 2, 8, 2, 2, 4, 6, 2, 4, 2, 2, 6, 2, 4, 2, 6, 2, 2, 4, 2, 6, 2, 2, 4, 6, 2, 2, 4, 2];
 
@@ -115,8 +116,8 @@ export default function Home() {
                 <span className={`mono ${styles.heroLer}`}>LER MATÉRIA →</span>
               </div>
               <div className={styles.heroMedia}>
-                <div className={styles.heroGradiente} />
-                <span className={`mono ${styles.heroFig}`}>Fig. 01 · estudo de forma</span>
+              <ImagemMateria conteudo={capa} fallback={<div className={styles.heroGradiente} />} />
+                <span className={`mono ${styles.heroFig}`}>Imagem ilustrativa</span>
               </div>
             </div>
           </button>

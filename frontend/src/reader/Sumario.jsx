@@ -6,6 +6,8 @@ import { listarMaterias } from "../api/revista";
 import { lerPreferencias } from "../onboarding/preferencias";
 import { lerToken } from "../onboarding/sessao";
 import styles from "./Sumario.module.css";
+import CuradoriaIA from "./CuradoriaIA";
+import ImagemMateria from "./ImagemMateria";
 
 export default function Sumario() {
   const navigate = useNavigate();
@@ -65,8 +67,8 @@ export default function Sumario() {
         </div>
         <h1 className={styles.titulo}>Sumário da edição #07</h1>
         <p className={styles.descricao}>
-          {conteudos.length} matéria(s), fechadas para você em 20 de agosto de 2047. Proporção de{" "}
-          {proporcao}% avanços e {100 - proporcao}% cultura, definida na sua ficha.
+          {conteudos.length} matéria(s) disponíveis no catálogo. Sua ficha indica preferência por{" "}
+          {proporcao}% avanços e {100 - proporcao}% cultura. Gere sua seleção abaixo.
         </p>
         <div className={styles.barraProporcao}>
           <div style={{ width: `${proporcao}%` }} />
@@ -74,7 +76,9 @@ export default function Sumario() {
         </div>
       </div>
 
+      {!carregando && !erro && conteudos.length > 0 && <CuradoriaIA />}
       <div className={styles.lista}>
+        <h2>Catálogo completo</h2>
         {carregando && <p className={styles.mensagem}>Carregando…</p>}
         {!carregando && erro && (
           <div className={styles.mensagem} role="alert">
@@ -98,7 +102,7 @@ export default function Sumario() {
                 <p className={`mono ${styles.itemPagina}`}>P. {String(c.pagina ?? "—").padStart(2, "0")}</p>
                 <p className={`mono ${styles.editoria}`}>{c.editoria.nome.toUpperCase()}</p>
                 <div className={styles.foto}>
-                  <span className="mono">FOTO</span>
+                  <ImagemMateria conteudo={c} fallback={<span className="mono">SEM IMAGEM</span>} />
                 </div>
                 <div className={styles.textos}>
                   <p className={styles.itemTitulo}>{c.titulo}</p>

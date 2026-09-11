@@ -25,6 +25,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from database import get_connection
+from ia import gerar_resumo
+from curadoria import PreferenciasCuradoria, selecionar_materias
 
 load_dotenv()
 
@@ -84,6 +86,7 @@ class MateriaSaida(BaseModel):
     subtitulo: str | None = None
     pagina: int | None = None
     tempo_leitura: int | None = None
+    imagem_url: str | None = None
 
 
 class MateriaDetalheSaida(MateriaSaida):
@@ -145,14 +148,14 @@ def linha_para_materia(l: tuple) -> dict:
     return {
         "id_materia": l[0], "titulo": l[1], "categoria": l[2], "autor": l[3],
         "publicada_em": _data(l[4]), "resumo": l[5], "subtitulo": l[6],
-        "pagina": l[7], "tempo_leitura": l[8],
+        "pagina": l[7], "tempo_leitura": l[8], "imagem_url": l[9],
     }
 
 
 def linha_para_materia_detalhe(l: tuple) -> dict:
     d = linha_para_materia(l)
-    d["corpo"] = l[9] or ""
-    d["palavras_chave"] = l[10]
+    d["corpo"] = l[10] or ""
+    d["palavras_chave"] = l[11]
     return d
 
 
@@ -225,7 +228,8 @@ def listar_materias():
                    m.resumo,
                    m.subtitulo,
                    ROW_NUMBER() OVER (ORDER BY m.publicada_em, m.id_materia) AS pagina,
-                   GREATEST(1, ROUND(DBMS_LOB.GETLENGTH(m.corpo) / 1100))   AS tempo_leitura
+                   GREATEST(1, ROUND(DBMS_LOB.GETLENGTH(m.corpo) / 1100))   AS tempo_leitura,
+                   m.imagem_url
             FROM materia m
             JOIN eixo  e ON e.id_eixo  = m.id_eixo
             JOIN autor a ON a.id_autor = m.id_autor
@@ -264,6 +268,11 @@ def materias_mais_comentadas():
         conn.close()
 
 
+@app.post("/curadoria")
+def curadoria(preferencias: PreferenciasCuradoria):
+    return {"recomendacoes": selecionar_materias(preferencias, listar_materias())}
+
+
 @app.get("/materias/{id_materia}", response_model=MateriaDetalheSaida)
 def obter_materia(id_materia: int):
     """Detalhe de uma materia para a tela de Leitura da revista: mesmos
@@ -273,7 +282,7 @@ def obter_materia(id_materia: int):
     try:
         cursor.execute("""
             SELECT id_materia, titulo, categoria, autor, publicada_em,
-                   resumo, subtitulo, pagina, tempo_leitura, corpo, palavras_chave
+                   resumo, subtitulo, pagina, tempo_leitura, imagem_url, corpo, palavras_chave
             FROM (
                 SELECT m.id_materia,
                        m.titulo,
@@ -284,6 +293,7 @@ def obter_materia(id_materia: int):
                        m.subtitulo,
                        ROW_NUMBER() OVER (ORDER BY m.publicada_em, m.id_materia) AS pagina,
                        GREATEST(1, ROUND(DBMS_LOB.GETLENGTH(m.corpo) / 1100)) AS tempo_leitura,
+                       m.imagem_url,
                        m.corpo,
                        (SELECT LISTAGG(t.nome, ', ') WITHIN GROUP (ORDER BY t.nome)
                           FROM materia_tag mt
@@ -304,6 +314,27 @@ def obter_materia(id_materia: int):
     finally:
         cursor.close()
         conn.close()
+
+
+# =====================================================================
+# RESUMO COM IA
+# =====================================================================
+
+class ResumoIASaida(BaseModel):
+    id_materia: int
+    resumo: str
+    modelo: str
+
+
+@app.post("/materias/{id_materia}/resumo-ia", response_model=ResumoIASaida)
+def resumir_materia(id_materia: int):
+    materia = obter_materia(id_materia)
+    modelo = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite").strip()
+    return {
+        "id_materia": id_materia,
+        "resumo": gerar_resumo(materia["titulo"], materia["corpo"], modelo),
+        "modelo": modelo,
+    }
 
 
 # =====================================================================

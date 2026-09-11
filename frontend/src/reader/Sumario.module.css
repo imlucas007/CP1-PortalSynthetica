@@ -140,6 +140,7 @@
 }
 
 .foto {
+  overflow: hidden;
   width: 132px;
   height: 88px;
   flex-shrink: 0;
