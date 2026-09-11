@@ -23,4 +23,6 @@ def aplicar_migracoes(engine: Engine):
     with engine.begin() as conexao:
         for nome, tipo in COLUNAS_NOVAS_USUARIOS.items():
             if nome not in colunas_existentes:
+                if tipo == "DATETIME" and engine.dialect.name == "postgresql":
+                    tipo = "TIMESTAMP"
                 conexao.execute(text(f"ALTER TABLE usuarios ADD COLUMN {nome} {tipo}"))

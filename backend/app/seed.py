@@ -1,10 +1,14 @@
 from datetime import datetime
+import os
+import secrets
 
 from sqlalchemy.orm import Session
 
 from . import auth, models
 
-SENHA_PADRAO_REDACAO = "redacao2047"
+SENHA_PADRAO_REDACAO = os.getenv("ADMIN_INITIAL_PASSWORD") or (
+    secrets.token_urlsafe(32) if os.getenv("RENDER") else "redacao2047"
+)
 
 
 def _conteudos_exemplo(ed_por_nome):
