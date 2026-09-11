@@ -193,6 +193,8 @@
 }
 
 @media (max-width: 760px) {
+  .topbar { flex-wrap: wrap; }
+  .usuaria { max-width: 100%; }
   .item > div {
     display: grid;
     grid-template-columns: auto 1fr auto;

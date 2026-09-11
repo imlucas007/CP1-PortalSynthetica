@@ -30,6 +30,18 @@ body {
   background: var(--papel);
   color: var(--admin-texto);
   font-family: "Archivo", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+input, textarea, select { min-width: 0; max-width: 100%; }
+video, canvas, iframe { max-width: 100%; }
+
+/* Campos legíveis sem zoom automático no Safari e alvos de toque confortáveis. */
+@media (max-width: 820px) {
+  #root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  #root textarea, #root select { font-size: 16px; }
+  button, a { touch-action: manipulation; }
+  button { min-height: 44px; }
 }
 
 button,

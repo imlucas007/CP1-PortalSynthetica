@@ -185,7 +185,10 @@
 @media (max-width: 720px) {
   .folhaConteudo {
     padding: 32px 24px 36px;
+    min-height: 100svh;
   }
+  .centro { padding: 32px 0; }
+  .wordmark { font-size: clamp(30px, 10.5vw, 76px); }
   .cabecalho {
     flex-direction: column;
     gap: 4px;

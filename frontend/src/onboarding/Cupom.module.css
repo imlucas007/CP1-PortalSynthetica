@@ -114,7 +114,10 @@
   }
   .titulo {
     font-size: clamp(24px, 6.5vw, 34px);
+    line-height: 1.15;
   }
+  .cupom { max-width: 100%; }
+  .cabecalho { gap: 12px; flex-wrap: wrap; }
   .rodape {
     flex-wrap: wrap;
     gap: 12px;

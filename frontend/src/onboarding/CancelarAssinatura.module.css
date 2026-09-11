@@ -164,6 +164,10 @@
 }
 
 @media (max-width: 720px) {
+  .card > div { padding: 28px 20px; }
+  .marca { margin-left: 0; }
+  .alternativas, .acoes { flex-direction: column; }
+  .titulo { font-size: 30px; }
   .pagina {
     padding: 40px 16px;
   }

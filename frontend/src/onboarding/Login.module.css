@@ -176,17 +176,6 @@
   opacity: 0.6;
 }
 
-.botaoGoogle {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.25px solid rgba(255, 255, 255, 0.95);
-  color: var(--admin-texto);
-  font-size: 11px;
-  letter-spacing: 1.4px;
-  padding: 20px;
-  border-radius: 999px;
-  opacity: 0.5;
-}
-
 .rodapeCard {
   text-align: center;
   font-size: 13px;
@@ -203,11 +192,18 @@
 }
 
 @media (max-width: 620px) {
+  .pagina { padding: 24px 16px; }
+  .marca, .acesso, .edicao { position: relative; inset: auto; }
+  .acesso { margin: 12px 0 24px; }
+  .edicao { margin: 16px 0; }
   .card {
+    margin: 24px auto;
     width: 100%;
     max-width: 100%;
   }
   .card > div {
     padding: 36px 24px 32px;
   }
+  .titulo { font-size: clamp(26px, 7vw, 34px); }
+  .opcoes { flex-wrap: wrap; gap: 12px; }
 }

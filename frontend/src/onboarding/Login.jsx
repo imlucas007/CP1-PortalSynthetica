@@ -99,9 +99,6 @@ export default function Login() {
             <button className={`mono ${styles.botaoEntrar}`} disabled={enviando}>
               {enviando ? "ENTRANDO…" : "ENTRAR"}
             </button>
-            <button type="button" className={`mono ${styles.botaoGoogle}`} disabled>
-              CONTINUAR COM GOOGLE
-            </button>
           </form>
 
           <p className={styles.rodapeCard}>

@@ -205,9 +205,9 @@
   letter-spacing: 1.2px;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   .pagina {
-    padding: 20px 16px;
+    padding: 0;
   }
   .cartaConteudo {
     flex-wrap: wrap;
@@ -215,4 +215,10 @@
   .filtros {
     flex-wrap: wrap;
   }
+  .corpo { flex-basis: 100%; }
+  .meta { max-width: 100%; }
+  .busca { max-width: 100%; }
+  .barraSelecao { height: auto; flex-wrap: wrap; border-radius: 22px; }
+  .acoesEmMassa, .acoes { flex-wrap: wrap; justify-content: flex-start; }
+  .titulo { font-size: clamp(28px, 5vw, 40px); }
 }

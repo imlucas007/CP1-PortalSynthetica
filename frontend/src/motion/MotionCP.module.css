@@ -170,6 +170,8 @@
 }
 
 @media (max-width: 560px) {
+  .palco { padding: 16px; }
+  .palco > * { min-width: 0; max-width: 100%; }
   .pagina {
     padding: 56px 20px 72px;
   }

@@ -137,6 +137,7 @@
 }
 
 @media (max-width: 620px) {
+  .titulo { font-size: 32px; line-height: 1.1; }
   .pagina {
     padding: 48px 16px;
   }

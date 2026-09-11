@@ -791,7 +791,11 @@
     padding: 12px 16px;
   }
   .navLinks {
-    display: none;
+    display: flex;
+    order: 3;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 4px 20px;
   }
   .hero {
     padding: 48px 20px 0;
@@ -814,7 +818,45 @@
     font-size: clamp(24px, 6vw, 38px);
   }
   .capaImagem {
-    width: 100%;
+    width: min(300px, 100%);
     height: auto;
   }
+}
+
+@media (max-width: 1100px) {
+  .introColuna { margin-top: 0; justify-content: flex-start; }
+  .valores, .artigos, .equipe, .planos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .capaConteudo { flex-wrap: wrap; }
+  .capaTexto { flex-basis: 100%; }
+  .navLinks { gap: 16px; }
+}
+
+@media (max-width: 860px) {
+  .nav { position: relative; top: 0; border-radius: 24px; }
+  .navLinks a { display: inline-flex; align-items: center; min-height: 44px; }
+  .capa, .valores, .newsletter { margin: 48px 16px 0; }
+  .rodape { margin: 48px 16px 24px; }
+  .newsletterTexto, .newsletterForm, .newsletterSucesso, .rodapeMarca { min-width: 0; flex-basis: 100%; }
+  .capaJustificativa { flex-wrap: wrap; border-radius: 16px; }
+  .passos { flex-wrap: wrap; }
+  .passo { flex: 1 1 220px; }
+  .planoCard > div { padding: 28px 24px; }
+  .planoPreco { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .valores, .artigos, .equipe, .planos { grid-template-columns: minmax(0, 1fr); }
+  .heroMeta { gap: 12px; }
+  .heroGrade { gap: 24px; }
+  .introCard { width: 100%; }
+  .ctas { flex-direction: column; }
+  .capaTitulo { font-size: 32px; }
+  .newsletterCampo { flex-direction: column; }
+  .newsletterCampo button { padding: 16px; }
+  .rodapeTopo { gap: 28px; }
+  .rodapeSocial { flex-wrap: wrap; }
+  .valorCard > div { padding: 28px 24px; }
 }

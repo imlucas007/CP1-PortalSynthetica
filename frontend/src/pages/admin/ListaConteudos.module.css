@@ -305,9 +305,9 @@
 /* Admin é ferramenta de desktop, mas abaixo de ~800px a tabela de colunas
    fixas estourava a viewport. Aqui as linhas quebram e as colunas menos
    críticas (ID, data) ssomem. */
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
   .pagina {
-    padding: 20px 16px;
+    padding: 0;
   }
   .linhaCabecalho {
     display: none;
@@ -326,4 +326,9 @@
   .filtros {
     flex-wrap: wrap;
   }
+  .cabecalho, .linhaResultado, .paginacao { flex-wrap: wrap; gap: 16px; }
+  .busca { max-width: 100%; }
+  .barraSelecao { height: auto; flex-wrap: wrap; border-radius: 22px; }
+  .acoesEmMassa, .paginas { flex-wrap: wrap; justify-content: flex-start; }
+  .titulo { font-size: clamp(28px, 5vw, 42px); }
 }

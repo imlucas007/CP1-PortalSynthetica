@@ -358,7 +358,11 @@
 
 @media (max-width: 860px) {
   .nav {
-    display: none;
+    display: flex;
+    order: 3;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 4px 18px;
   }
   .topbar {
     height: auto;
@@ -368,6 +372,7 @@
   }
   .navDireita {
     gap: 14px;
+    flex-wrap: wrap;
   }
   .navDireita button {
     font-size: 10px;
@@ -393,6 +398,13 @@
   .itemOlho {
     grid-column: 1 / -1;
   }
+}
+
+@media (max-width: 560px) {
+  .topbar { position: relative; justify-content: space-between; }
+  .itemConteudo { grid-template-columns: minmax(0, 1fr); padding: 18px; }
+  .itemTempo { grid-column: 1; }
+  .proporcaoLabels { flex-wrap: wrap; gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

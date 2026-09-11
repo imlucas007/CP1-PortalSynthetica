@@ -109,6 +109,11 @@
 }
 
 @media (max-width: 680px) {
+  .card > div { padding: 28px 20px; }
+  .marca { margin-left: 0; }
+  .resumo { padding: 20px 16px; }
+  .linha { flex-wrap: wrap; gap: 8px; }
+  .titulo { font-size: 30px; }
   .pagina {
     padding: 40px 16px;
   }
